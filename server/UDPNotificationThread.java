@@ -15,14 +15,12 @@ public class UDPNotificationThread extends Thread {
 	
 	private int port;
 	private String message = "";
-	private Server server = null;
 	private InetAddress inetAddress = null;
 	
 	
-	public UDPNotificationThread(InetAddress inetAddress, int port, String message, Server server) {
+	public UDPNotificationThread(InetAddress inetAddress, int port, String message) {
 		this.port = port;
 		this.message = message;
-		this.server = server;
 		this.inetAddress = inetAddress;
 	}
 	

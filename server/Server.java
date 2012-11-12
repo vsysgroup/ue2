@@ -5,12 +5,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Scanner;
-
-import communication.TCPCommunication;
 
 import exception.WrongParameterCountException;
 
@@ -25,7 +22,6 @@ public class Server {
 	private boolean serverStatus = false;
 	private ServerTCPListenerThread serverTCPListenerThread = null;
 	private AuctionCheckThread auctionCheckThread = null;
-	private TCPCommunication tcpCommunication = null;
 	private ServerSocket serverSocket = null;
 	private ArrayList<User> users = new ArrayList<User>();
 	private ArrayList<Auction> auctions = new ArrayList<Auction>();
@@ -105,12 +101,12 @@ public class Server {
 				User newUser = new User(username, inetAddress, port);
 				users.add(newUser);
 				newUser.logIn();
-				new UDPNotificationThread(inetAddress, port, "login successful" + " " + username, this).start();
+				new UDPNotificationThread(inetAddress, port, "login successful" + " " + username).start();
 			}
 			else{
 				User user = findUser(username);
 				if(user.loggedIn()) {
-					new UDPNotificationThread(inetAddress, port, "login failed", this).start();
+					new UDPNotificationThread(inetAddress, port, "login failed").start();
 				}
 				else{
 					user.logIn();
@@ -120,10 +116,10 @@ public class Server {
 					if(!user.getInetAddress().equals(inetAddress)) {
 						user.setInetAddress(inetAddress);
 					}
-					new UDPNotificationThread(inetAddress, port, "login successful" + " " + username, this).start();
+					new UDPNotificationThread(inetAddress, port, "login successful" + " " + username).start();
 					if(user.getSavedMessages().size() > 0) {
 						for(int i = 0; i < user.getSavedMessages().size(); i++) {
-							new UDPNotificationThread(inetAddress, port, user.getSavedMessages().get(i), this).start();
+							new UDPNotificationThread(inetAddress, port, user.getSavedMessages().get(i)).start();
 						}
 						user.clearMessages();
 					}
@@ -142,7 +138,7 @@ public class Server {
 			int port = user.getPort();
 			if(user.loggedIn()) {
 				user.logOut();
-				new UDPNotificationThread(inetAddress, port, "logout successful" + " " + username, this).start();
+				new UDPNotificationThread(inetAddress, port, "logout successful" + " " + username).start();
 			}
 		}
 		
@@ -165,7 +161,7 @@ public class Server {
 			String endDate = newAuction.dateToString();
 			int ID = newAuction.getID();
 			
-			new UDPNotificationThread(inetAddress, port, "create successful" + " " + ID + " " + endDate + " " + description, this).start();
+			new UDPNotificationThread(inetAddress, port, "create successful" + " " + ID + " " + endDate + " " + description).start();
 		}
 		
 		/**
@@ -182,7 +178,7 @@ public class Server {
 			
 			String list = buildList();
 			
-			new UDPNotificationThread(returnAddress, port, "list" + " " + list, this).start();
+			new UDPNotificationThread(returnAddress, port, "list" + " " + list).start();
 		}
 		
 		/**
@@ -191,7 +187,6 @@ public class Server {
 		if(input[0].equals("!bid")) {
 			String username = input[1];
 			User user = findUser(username);
-			int port = user.getPort();
 			findAuctionByID(input[2]).newBid(user, Double.parseDouble(input[3]));
 		}
 	}
@@ -284,7 +279,7 @@ public class Server {
 	public void bidUnsuccessful(User bidder, double amountBid, double amountHighestBid, String description) {
 		InetAddress inetAddress = bidder.getInetAddress();
 		int port = bidder.getPort();
-		new UDPNotificationThread(inetAddress, port, "bid" + " " + "unsuccessful" + " " + amountBid + " " + amountHighestBid + " " + description , this).start();
+		new UDPNotificationThread(inetAddress, port, "bid" + " " + "unsuccessful" + " " + amountBid + " " + amountHighestBid + " " + description).start();
 	}
 	
 	/**
@@ -331,10 +326,10 @@ public class Server {
 			}
 			else {
 				if(bidders.get(i).getUsername().equals(winner.getUsername())) {
-					new UDPNotificationThread(winner.getInetAddress(), winner.getPort(), "!auction-ended" + " " + "You"  + " " + winningBid  + " " + description, this).start();
+					new UDPNotificationThread(winner.getInetAddress(), winner.getPort(), "!auction-ended" + " " + "You"  + " " + winningBid  + " " + description).start();
 				}
 				else {
-					new UDPNotificationThread(bidders.get(i).getInetAddress(), bidders.get(i).getPort(), "!auction-ended"  + " " + winner.getUsername()  + " " + winningBid + " " + description, this).start();
+					new UDPNotificationThread(bidders.get(i).getInetAddress(), bidders.get(i).getPort(), "!auction-ended"  + " " + winner.getUsername()  + " " + winningBid + " " + description).start();
 				}
 			}
 		}
@@ -378,7 +373,7 @@ public class Server {
 	public void bidSuccessful(User bidder, double amount, String description) {
 		InetAddress inetAddress = bidder.getInetAddress();
 		int port = bidder.getPort();
-		new UDPNotificationThread(inetAddress, port, "bid" + " " + "successful" + " " + amount + " "  + description , this).start();
+		new UDPNotificationThread(inetAddress, port, "bid" + " " + "successful" + " " + amount + " "  + description).start();
 	}
 	
 	/**
@@ -393,7 +388,7 @@ public class Server {
 			bidder.addMessage("!new-bid" + description);
 		}
 		else {
-			new UDPNotificationThread(inetAddress, port, "!new-bid" + " " + description, this).start();
+			new UDPNotificationThread(inetAddress, port, "!new-bid" + " " + description).start();
 		}
 	}
 }

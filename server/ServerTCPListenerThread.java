@@ -6,8 +6,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import communication.TCPCommunication;
-
 /**
  * This thread listens for incoming connections, creates sockets for each new connection and assigns a serverTCPCommunicationThread
  * to every client.
@@ -17,7 +15,6 @@ import communication.TCPCommunication;
 public class ServerTCPListenerThread extends Thread {
 	private ServerSocket serverSocket = null;
 	private Server server = null;
-	private TCPCommunication tcpCommunication = null;
 	private ArrayList<Socket> sockets = new ArrayList<Socket>();
 	
 	public ServerTCPListenerThread(ServerSocket serverSocket, Server server) {

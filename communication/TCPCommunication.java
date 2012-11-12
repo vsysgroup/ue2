@@ -12,6 +12,7 @@ public class TCPCommunication {
 
 	private BufferedReader in = null;
 	private PrintWriter out = null;
+	@SuppressWarnings("unused")
 	private Socket socket = null;
 	
 	public TCPCommunication(Socket socket) throws IOException{

@@ -17,7 +17,6 @@ public class ServerTCPCommunicationThread extends Thread {
 	private Server server;
 	private TCPCommunication tcpCommunication = null;
 	private User user;
-	private String username;
 	
 	public ServerTCPCommunicationThread(Socket socket, Server server) {
 		this.clientSocket = socket;
@@ -48,7 +47,6 @@ public class ServerTCPCommunicationThread extends Thread {
 	
 	public void setUser(User user) {
 		this.user = user;
-		this.username = user.getUsername();
 	}
 	
 	public User getUser() {
