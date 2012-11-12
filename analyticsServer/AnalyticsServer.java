@@ -10,6 +10,10 @@ import java.util.Properties;
 
 public class AnalyticsServer extends UnicastRemoteObject implements AnalyticsServerInterface {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static String registryHost = "";
 	private static int registryPort = 0;
 	private static String bindingName = "AnalyticsServer";
@@ -60,7 +64,7 @@ public class AnalyticsServer extends UnicastRemoteObject implements AnalyticsSer
 			Properties registryProperties = new Properties();
 			registryProperties.load(registryPropertiesFile);
 			registryHost = registryProperties.getProperty("registry.host");
-			registryPort = new Integer(registryProperties.getProperty("registry.port"));
+			registryPort = Integer.parseInt(registryProperties.getProperty("registry.port"));
 			registryPropertiesFile.close();
 		} 
 	}
