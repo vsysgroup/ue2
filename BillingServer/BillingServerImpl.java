@@ -1,6 +1,7 @@
 package BillingServer;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -15,12 +16,14 @@ import java.util.Map.Entry;
 public class BillingServerImpl implements IBillingServer {
 
 	@Override
-	public BillingServerSecure login(String username, String password) throws RemoteException {
+	public BillingServerSecureImpl login(String username, String password) throws RemoteException {
 		if(!checkAuthentification(username, password)) {
 			return null;
 		}
-		//TODO export remote
-		return BillingServerSecure.getInstance();
+		//export remote
+		BillingServerSecureImpl billingServerAccess = BillingServerSecureImpl.getInstance(); 
+		UnicastRemoteObject.exportObject(billingServerAccess, 0);
+		return billingServerAccess;
 	}
 	
 	private boolean checkAuthentification(String name, String pw) {
