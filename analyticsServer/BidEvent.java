@@ -1,6 +1,15 @@
 package analyticsServer;
 
+/**
+ * This class represents a BidEvent.
+ * @author Philipp Pfeiffer 0809357
+ *
+ */
 public class BidEvent extends Event {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5770061771124680939L;
 	public String userName = "";
 	public long auctionID = 0;
 	public double price = 0;
