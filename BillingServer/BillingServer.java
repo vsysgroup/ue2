@@ -9,6 +9,9 @@ import java.rmi.server.UnicastRemoteObject;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+import registry.RegistryCreator;
+import registry.RegistryReader;
+
 /**
  * responsible for billing;
  * addressed by Management Clients and Auction Server via RMI
@@ -40,14 +43,14 @@ public class BillingServer {
 		RegistryReader registryLocation = new RegistryReader();
 		IBillingServer login = new BillingServerImpl();
 		try {
-			LocateRegistry.createRegistry(registryLocation.getPort());
+			RegistryCreator.getInstance();
 			//jdoc: if port is zero, an anonymous port is chosen
 			IBillingServer stub = (IBillingServer) UnicastRemoteObject.exportObject(login, 0);
 			Registry registry = LocateRegistry.getRegistry(registryLocation.getHost(), registryLocation.getPort());
 			registry.bind(bindingName, stub);
 			LOG.info("registry bound");
 		} catch (RemoteException e) {
-			LOG.info("error while creating registry");
+			LOG.info("error getting registry");
 		} catch (AlreadyBoundException e) {
 			LOG.info("object already bound");
 		}

@@ -8,8 +8,9 @@ import java.rmi.registry.Registry;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+import registry.RegistryReader;
+
 import billingServer.IBillingServer;
-import billingServer.RegistryReader;
 
 
 /**

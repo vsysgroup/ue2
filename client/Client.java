@@ -13,9 +13,10 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
+import registry.RegistryReader;
+
 import billingServer.BillingServerImpl;
 import billingServer.IBillingServer;
-import billingServer.RegistryReader;
 
 
 import communication.TCPCommunication;
