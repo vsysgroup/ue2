@@ -2,6 +2,11 @@ package analyticsServer;
 
 import java.io.Serializable;
 
+/**
+ * This abstract class represents and Event. Other event subtypes inherit from it.
+ * @author Philipp Pfeiffer 0809357
+ *
+ */
 public abstract class Event implements Serializable {
 
 	/**

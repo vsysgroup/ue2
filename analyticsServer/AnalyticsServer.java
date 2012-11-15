@@ -6,8 +6,16 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The main class of the AnalyticsServer
+ * @author Philipp Pfeiffer 0809357
+ *
+ */
 public class AnalyticsServer extends UnicastRemoteObject implements AnalyticsServerInterface {
 	
 	/**
@@ -17,6 +25,15 @@ public class AnalyticsServer extends UnicastRemoteObject implements AnalyticsSer
 	private static String registryHost = "";
 	private static int registryPort = 0;
 	private static String bindingName = "";
+	
+	private Map<String, AuctionUser> userStats = Collections.synchronizedMap(new ConcurrentHashMap<String, AuctionUser>());
+	private Map<Long, AuctionStats> auctionStats = Collections.synchronizedMap(new ConcurrentHashMap<Long, AuctionStats>());
+	
+	private long totalMinSessionTime = 0;
+	private long totalMaxSessionTime = 0;
+	private long totalAvgSessionTime = 0;
+	private long totalSessionTime = 0;
+	private int totalSessionAmount = 0;
 
 	/**
 	 * @param args
@@ -55,7 +72,8 @@ public class AnalyticsServer extends UnicastRemoteObject implements AnalyticsSer
 	}
 	
 	public AnalyticsServer(String[] args) throws NumberFormatException, RemoteException {
-		//TODO: server needs to do things
+		super();
+		//TODO possibly do more?
 	}
 	
 	/**
@@ -152,8 +170,34 @@ public class AnalyticsServer extends UnicastRemoteObject implements AnalyticsSer
 		
 	}
 	
+	public void checkIfMinSessionTime(long time) {
+		if(time < totalMinSessionTime || totalMinSessionTime == 0) {
+			totalMinSessionTime = time;
+			//TODO Trigger USER_SESSIONTIME_MIN event
+		}
+	}
+	
+	public void checkIfMaxSessionTime(long time) {
+		if(time > totalMaxSessionTime) {
+			totalMaxSessionTime = time;
+			//TODO Trigger USER_SESSIONTIME_MAX event
+		}
+	}
+	
+	public void updateAvgSessionTime(long time) {
+		totalSessionTime += time;
+		totalSessionAmount ++;
+		totalAvgSessionTime = (totalSessionTime / totalSessionAmount);
+		//TODO Trigger USER_SESSIONTIME_AVG event
+	}
+	
+	/**
+	 * This method displays a usage text, if the parameters when starting the server are wrong
+	 */
 	public static void howToUse() {
 		System.out.println("Parameters incorrect. Correct syntax: java AnalyticsServer <bindingName>");
 	}
+	
+	
 
 }
