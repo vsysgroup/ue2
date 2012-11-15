@@ -5,7 +5,18 @@ import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Scanner;
+
+import org.apache.log4j.Logger;
+
+import billingServer.BillingServerImpl;
+import billingServer.IBillingServer;
+import billingServer.RegistryReader;
+
 
 import communication.TCPCommunication;
 
@@ -32,6 +43,7 @@ public class Client {
 
 	
 	public static void main(String[] args) {
+		
 		try {
 			new Client(args);
 		} catch(NumberFormatException e ) {

@@ -1,4 +1,4 @@
-package BillingServer;
+package billingServer;
 
 /**
  * represent configuration of price steps

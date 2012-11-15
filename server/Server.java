@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import org.apache.log4j.BasicConfigurator;
+
 import exception.WrongParameterCountException;
 
 /**
@@ -17,7 +19,7 @@ import exception.WrongParameterCountException;
  *
  */
 public class Server {
-	
+
 	private int tcpPort;
 	private boolean serverStatus = false;
 	private ServerTCPListenerThread serverTCPListenerThread = null;
@@ -27,8 +29,12 @@ public class Server {
 	private ArrayList<Auction> auctions = new ArrayList<Auction>();
 	private Scanner in = new Scanner(System.in);
 
-	
+
 	public static void main(String[] args) {
+		
+		//init Logger
+		BasicConfigurator.configure();
+
 		try {
 			new Server(args);
 		} catch(NumberFormatException e) {
@@ -37,7 +43,7 @@ public class Server {
 			howToUse();
 		} 
 	}
-	
+
 	/**
 	 * 
 	 * @param args
@@ -49,25 +55,25 @@ public class Server {
 		} else {
 			this.tcpPort = Integer.parseInt(args[0]);
 		}
-		
+
 		System.out.println("Starting Server.");
-		
+
 		try {
 			serverSocket = new ServerSocket(tcpPort);
 		} catch (IOException e) {
 			System.out.println("Could not create socket!");
 			exit();
 		}
-		
-		
-		
+
+
+
 		serverStatus = true;
-		
+
 		serverTCPListenerThread = new ServerTCPListenerThread(serverSocket, this);
 		serverTCPListenerThread.start();
 		auctionCheckThread = new AuctionCheckThread(this);
 		auctionCheckThread.start();
-		
+
 		while(serverStatus) {
 			while(in.hasNextLine() && serverStatus) {
 				exit();
@@ -76,7 +82,7 @@ public class Server {
 		}
 		System.out.println("test");
 	}
-	
+
 	/**
 	 * Receives a message and a socket and processes the message
 	 * @param message
@@ -84,9 +90,9 @@ public class Server {
 	 */
 	public void receiveMessage(String message, Socket socket) {
 		InetAddress inetAddress = socket.getInetAddress();
-				
+
 		String[] input = message.split(" ");
-		
+
 		/**
 		 * logs the user in
 		 * sends the following responses:
@@ -96,7 +102,7 @@ public class Server {
 		if(input[0].equals("!login")) {
 			String username = input[1];
 			int port = Integer.parseInt(input[2]);
-			
+
 			if(!userKnown(username)){
 				User newUser = new User(username, inetAddress, port);
 				users.add(newUser);
@@ -126,7 +132,7 @@ public class Server {
 				}
 			}
 		}
-		
+
 		/**
 		 * logs the user out
 		 * sends the following responses:
@@ -141,7 +147,7 @@ public class Server {
 				new UDPNotificationThread(inetAddress, port, "logout successful" + " " + username).start();
 			}
 		}
-		
+
 		/**
 		 * creates a new Auction
 		 * sends the following responses:
@@ -160,10 +166,10 @@ public class Server {
 			Auction newAuction = createAuction(user, seconds, description);
 			String endDate = newAuction.dateToString();
 			int ID = newAuction.getID();
-			
+
 			new UDPNotificationThread(inetAddress, port, "create successful" + " " + ID + " " + endDate + " " + description).start();
 		}
-		
+
 		/**
 		 * creates a list and sends it to the user
 		 * sends the following responses:
@@ -173,14 +179,14 @@ public class Server {
 			String username = input[1];
 			User user = findUser(username);
 			int port = user.getPort();
-			
+
 			InetAddress returnAddress = user.getInetAddress();
-			
+
 			String list = buildList();
-			
+
 			new UDPNotificationThread(returnAddress, port, "list" + " " + list).start();
 		}
-		
+
 		/**
 		 * Places a bid on an auction
 		 */
@@ -190,7 +196,7 @@ public class Server {
 			findAuctionByID(input[2]).newBid(user, Double.parseDouble(input[3]));
 		}
 	}
-	
+
 	/**
 	 * Finds an auction from the auction list by it's ID
 	 * @param IDString
@@ -216,7 +222,7 @@ public class Server {
 	public boolean getServerStatus() {
 		return serverStatus;
 	}
-	
+
 	/**
 	 * shuts down the server and frees all resources
 	 */
@@ -234,7 +240,7 @@ public class Server {
 			//closing socket for shutdown
 		}
 	}
-	
+
 	/**
 	 * Finds out whether a user is known or not
 	 * @param name
@@ -251,7 +257,7 @@ public class Server {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * finds and returns a user by name
 	 * @param name
@@ -281,7 +287,7 @@ public class Server {
 		int port = bidder.getPort();
 		new UDPNotificationThread(inetAddress, port, "bid" + " " + "unsuccessful" + " " + amountBid + " " + amountHighestBid + " " + description).start();
 	}
-	
+
 	/**
 	 * Creates a new auction and returns it
 	 * @param user
@@ -292,7 +298,7 @@ public class Server {
 	synchronized public Auction createAuction(User user, Long seconds, String description) {
 		Date date = new Date();
 		date.setTime(date.getTime()+(seconds*1000));
-		
+
 		Auction auction = new Auction(date, user, description, this);
 		auctions.add(auction);
 		return auction;
@@ -334,14 +340,14 @@ public class Server {
 			}
 		}
 	}
-	
+
 	/**
 	 * builds a list of all auctions
 	 * @return String
 	 */
 	public String buildList() {
 		String list = "";
-		
+
 		ArrayList<Auction> auctions = getAuctions();
 		for(int i = 0; i < auctions.size(); i++) {
 			int ID = auctions.get(i).getID();
@@ -352,7 +358,7 @@ public class Server {
 			User highestBidder = auctions.get(i).getWinner();
 			String highestBidderName = "";
 			String endDate = auctions.get(i).dateToString();
-			
+
 			if(highestBidder == null) {
 				highestBidderName = "none";
 			} else {
@@ -375,7 +381,7 @@ public class Server {
 		int port = bidder.getPort();
 		new UDPNotificationThread(inetAddress, port, "bid" + " " + "successful" + " " + amount + " "  + description).start();
 	}
-	
+
 	/**
 	 * This notification is sent out whenever a user has been overbid on an auction.
 	 * @param bidder

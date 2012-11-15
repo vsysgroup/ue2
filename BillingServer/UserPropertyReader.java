@@ -1,4 +1,4 @@
-package BillingServer;
+package billingServer;
 
 import java.io.IOException;
 import java.io.InputStream;

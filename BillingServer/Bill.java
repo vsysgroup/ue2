@@ -1,4 +1,4 @@
-package BillingServer;
+package billingServer;
 
 /**
  * stores all billing lines of a given user

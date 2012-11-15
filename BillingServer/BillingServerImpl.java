@@ -1,4 +1,4 @@
-package BillingServer;
+package billingServer;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
