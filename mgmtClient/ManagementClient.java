@@ -4,6 +4,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Scanner;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -22,7 +23,10 @@ public class ManagementClient {
 
 	public static final Logger LOG = Logger.getLogger(ManagementClient.class);
 	private static String bindingName = "BillingServer";
-
+	
+	private static IBillingServer loginHandler = null;
+	private Scanner in = new Scanner(System.in);
+	
 	/**
 	 * @param args
 	 */
@@ -32,16 +36,37 @@ public class ManagementClient {
 		BasicConfigurator.configure();
 
 		new ManagementClient();
-
+	}
+	
+	private ManagementClient() {
+		LOG.info("Starting Management Client");
+		
 		lookupRMI();
+		
+		String[] cmd;
+		while(in.hasNext()) {
+			cmd = in.nextLine().split("\\s");
+			if(cmd[0].equals("!login")) {
+				String username = cmd[1];
+				String pw = cmd[2];
+				try {
+					loginHandler.login(username, pw);
+					LOG.info("mgmt client logged in");
+				} catch (RemoteException e) {
+					LOG.info("remote login failed");
+				}
+			} else {
+				System.out.println("command unknown");
+			}
+		}
 	}
 
 	private static void lookupRMI() {
 		RegistryReader registryLocation = new RegistryReader();
-		IBillingServer login = null;
+		
 		try {
 			Registry registry = LocateRegistry.getRegistry(registryLocation.getHost(), registryLocation.getPort());
-			login = (IBillingServer) registry.lookup(bindingName);
+			loginHandler = (IBillingServer) registry.lookup(bindingName);
 			LOG.info("registry looked up");
 		} catch (RemoteException e) {
 			LOG.info("problem occurred trying to get registry");

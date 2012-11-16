@@ -1,5 +1,6 @@
 package billingServer;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.MessageDigest;
@@ -13,15 +14,20 @@ import java.util.Map.Entry;
  * @author Babz
  *
  */
-public class BillingServerImpl implements IBillingServer {
+public class BillingServerImpl implements IBillingServer, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
-	public BillingServerSecureImpl login(String username, String password) throws RemoteException {
-		if(!checkAuthentification(username, password)) {
-			return null;
-		}
+	public IBillingServerSecure login(String username, String password) throws RemoteException {
+//		if(!checkAuthentification(username, password)) {
+//			return null;
+//		}
 		//export remote
-		BillingServerSecureImpl billingServerAccess = BillingServerSecureImpl.getInstance(); 
+		BillingServerSecureImpl billingServerAccess = new BillingServerSecureImpl(); 
 		UnicastRemoteObject.exportObject(billingServerAccess, 0);
 		return billingServerAccess;
 	}

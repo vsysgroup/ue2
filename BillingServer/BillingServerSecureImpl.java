@@ -2,24 +2,26 @@ package billingServer;
 
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
+
 
 public class BillingServerSecureImpl implements IBillingServerSecure, Serializable {
 	
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
-	public static BillingServerSecureImpl instance = null;
-
-	private BillingServerSecureImpl() {}
 	
-	public static BillingServerSecureImpl getInstance() {
-		if(instance == null) {
-			instance = new BillingServerSecureImpl();
-		}
-		return instance;
+	public static final Logger LOG = Logger.getLogger(BillingServerSecureImpl.class);
+	
+	public BillingServerSecureImpl() {
+		LOG.info("i was called YIHAA");
 	}
-
+	
 	public PriceSteps getPriceSteps() {
 //		TODO implement
-		return PriceSteps.getInstance();
+//		return PriceSteps.getInstance();
+		return null;
 	}
 	
 	
