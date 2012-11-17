@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class UserPropertyReader {
 	
@@ -27,11 +26,12 @@ public class UserPropertyReader {
 			Properties props = new Properties();
 			try {
 				props.load(is);
-				Set<String> userPW= new TreeSet<String>(props.stringPropertyNames());
-				Iterator<String> it = userPW.iterator();
+				Set<String> user = props.stringPropertyNames();
+				Iterator<String> it = user.iterator();
 				while(it.hasNext()) {
-					String[] tmp = it.next().split("\\s");
-					permittedUser.put(tmp[0], tmp[1].getBytes());
+					String key = it.next();
+					String pw = props.getProperty(key);
+					permittedUser.put(key, pw.getBytes());
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

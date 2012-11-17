@@ -11,5 +11,12 @@ import java.rmi.RemoteException;
  */
 public interface IBillingServer extends Remote {
 
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @return null if user not authorized, access otherwise
+	 * @throws RemoteException
+	 */
 	IBillingServerSecure login(String username, String password) throws RemoteException;
 }
