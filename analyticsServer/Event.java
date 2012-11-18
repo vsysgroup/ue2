@@ -1,6 +1,7 @@
 package analyticsServer;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * This abstract class represents and Event. Other event subtypes inherit from it.
@@ -9,18 +10,21 @@ import java.io.Serializable;
  */
 public abstract class Event implements Serializable {
 
+	private static int newID = 0;
 	/**
-	 * generated serial ID
+	 * 
 	 */
-	private static final long serialVersionUID = -7156523106236168052L;
+	private static final long serialVersionUID = 1L;
 	public String ID = "";
 	public String type = "";
 	public long timeStamp = 0;
 	
-	public Event(String ID, String type, long timeStamp) {
-		this.ID = ID;
+	public Event(String type) {
+		newID++;
+		this.ID = Integer.toString(newID);
 		this.type = type;
-		this.timeStamp = timeStamp;
+		Date date = new Date();
+		this.timeStamp = date.getTime();
 	}
 	
 	public String getID() {

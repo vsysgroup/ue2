@@ -9,13 +9,13 @@ public class BidEvent extends Event {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5770061771124680939L;
+	private static final long serialVersionUID = 1L;
 	public String userName = "";
 	public long auctionID = 0;
 	public double price = 0;
 
-	public BidEvent(String ID, String type, long timeStamp, String userName, long auctionID, double price) {
-		super(ID, type, timeStamp);
+	public BidEvent(String type, String userName, long auctionID, double price) {
+		super(type);
 		this.userName = userName;
 		this.auctionID = auctionID;
 		this.price = price;

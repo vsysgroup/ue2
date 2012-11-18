@@ -6,14 +6,15 @@ package analyticsServer;
  *
  */
 public class StatisticsEvent extends Event {
+	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4443214497508813165L;
+	private static final long serialVersionUID = 1L;
 	public double value = 0;
 
-	public StatisticsEvent(String ID, String type, long timeStamp, double value) {
-		super(ID, type, timeStamp);
+	public StatisticsEvent(String type, double value) {
+		super(type);
 		this.value = value;
 	}
 	

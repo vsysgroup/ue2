@@ -7,7 +7,7 @@ package analyticsServer;
  */
 public class AuctionUser {
 	
-	private AnalyticsServer analyticsServer;
+	private AnalyticsServerImpl analyticsServer;
 	private String username;
 	private long minSessionTime = 0;
 	private long maxSessionTime = 0;
@@ -19,7 +19,7 @@ public class AuctionUser {
 	private long sessionEnd = 0;
 	private long lastSessionLength = 0;
 	
-	public AuctionUser(String username, AnalyticsServer analyticsServer) {
+	public AuctionUser(String username, AnalyticsServerImpl analyticsServer) {
 		this.username = username;
 		this.analyticsServer = analyticsServer;
 	}

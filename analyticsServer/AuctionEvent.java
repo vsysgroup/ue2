@@ -9,11 +9,11 @@ public class AuctionEvent extends Event {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3861867348808830937L;
+	private static final long serialVersionUID = 1L;
 	private long auctionID = 0;
 
-	public AuctionEvent(String ID, String type, long timeStamp, long auctionID) {
-		super(ID, type, timeStamp);
+	public AuctionEvent(String type, long auctionID) {
+		super(type);
 		this.auctionID = auctionID;
 		
 	}

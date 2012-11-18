@@ -9,11 +9,11 @@ public class UserEvent extends Event {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7120840440772694551L;
+	private static final long serialVersionUID = 1L;
 	public String userName = "";
 
-	public UserEvent(String ID, String type, long timeStamp, String userName) {
-		super(ID, type, timeStamp);
+	public UserEvent(String type, String userName) {
+		super(type);
 		this.userName = userName;
 	}
 	

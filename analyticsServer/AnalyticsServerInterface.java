@@ -9,9 +9,9 @@ import java.rmi.Remote;
  */
 public interface AnalyticsServerInterface extends Remote {
 	
-	public String subscribe(String filter);
+	public String subscribe(String filter, Notify n);
 	
-	public Event processEvent(Event event);
+	public void processEvent(Event event);
 	
 	public void unsubscribe(String identifier);
 	
