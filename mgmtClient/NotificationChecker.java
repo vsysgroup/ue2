@@ -1,5 +1,6 @@
 package mgmtClient;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import analyticsServer.AuctionEvent;
@@ -15,7 +16,17 @@ import analyticsServer.UserEvent;
  * @author Philipp Pfeiffer 0809357
  *
  */
-public class NotificationChecker implements Notify {
+public class NotificationChecker implements Notify, Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private ManagementClient managementClient = null;
+	
+	public NotificationChecker(ManagementClient managementClient) {
+		this.managementClient = managementClient;
+	}
 
 	@Override
 	public void notify(Event event) throws RemoteException {

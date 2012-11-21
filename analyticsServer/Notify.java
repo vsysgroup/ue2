@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
  * @author Philipp Pfeiffer 0809357
  *
  */
-public interface Notify extends Remote {
+public interface Notify extends Remote{
 	
 	public void notify(Event event) throws RemoteException;
 
