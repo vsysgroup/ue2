@@ -1,11 +1,20 @@
 package analyticsServer;
 
+import java.io.Serializable;
+import java.rmi.NoSuchObjectException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+
+import mgmtClient.ManagementClient;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class is the implementation of AnalyticsServerInterface. It also contains all methods used to calculate statistics and
@@ -13,12 +22,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Philipp Pfeiffer 0809357
  *
  */
-public class AnalyticsServerImpl implements AnalyticsServerInterface{
+public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializable{
 	
-	
+	public static final Logger LOG = Logger.getLogger(AnalyticsServerImpl.class);
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Map<String, AuctionUser> userStats = Collections.synchronizedMap(new ConcurrentHashMap<String, AuctionUser>());
 	private Map<Long, AuctionStats> auctionStats = Collections.synchronizedMap(new ConcurrentHashMap<Long, AuctionStats>());
 	private Map<String, Subscription> subscriptions = Collections.synchronizedMap(new ConcurrentHashMap<String, Subscription>());
+	
 	
 	private long totalMinSessionTime = 0;
 	private long totalMaxSessionTime = 0;
@@ -43,6 +58,8 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface{
 	
 	private static int newSubscriptionID = 0;
 	
+	private boolean status = true;
+	
 	public AnalyticsServerImpl() {
 		Date date = new Date();
 		serverStartingTime = date.getTime();
@@ -54,6 +71,7 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface{
 		String ID = Integer.toString(newSubscriptionID);
 		Subscription newSubscription = new Subscription(ID, filter, notify);
 		subscriptions.put(ID, newSubscription);
+		LOG.info("mehmehmeh test");
 		return ID;
 	}
 
@@ -189,6 +207,7 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface{
 	}
 	
 	public void sendThroughFilter(Event event, String filter) {
+		//TODO: Better filtering through java regex
 		Iterator<?> iter = subscriptions.entrySet().iterator();
 		while(iter.hasNext()) {
 			Entry<?, ?> pair = (Entry<?, ?>) iter.next();
@@ -233,4 +252,10 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface{
 		totalAuctionTimeAvg = totalAuctionTime/totalNumberOfAuctions;
 		processEvent(new StatisticsEvent("AUCTION_TIME_AVG", totalAuctionTimeAvg));
 	}
+	
+	public boolean getStatus() {
+		return status;
+	}
+
+
 }

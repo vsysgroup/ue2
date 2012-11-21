@@ -1,6 +1,7 @@
 package analyticsServer;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * This interface provides methods available for remote calls.
@@ -9,10 +10,10 @@ import java.rmi.Remote;
  */
 public interface AnalyticsServerInterface extends Remote {
 	
-	public String subscribe(String filter, Notify n);
+	public String subscribe(String filter, Notify n) throws RemoteException;
 	
-	public void processEvent(Event event);
+	public void processEvent(Event event) throws RemoteException;
 	
-	public void unsubscribe(String identifier);
+	public void unsubscribe(String identifier) throws RemoteException;
 	
 }

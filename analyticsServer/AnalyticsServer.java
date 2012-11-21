@@ -1,10 +1,13 @@
 package analyticsServer;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
@@ -21,37 +24,59 @@ public class AnalyticsServer {
 	
 	public static final Logger LOG = Logger.getLogger(AnalyticsServer.class);
 	private static String bindingName = "AnalyticsServer";
+	private static AnalyticsServerInterface analyticsServer;
+	
+	private static Scanner in = new Scanner(System.in);
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		
-		bindingName = args[0];
-		
+		LOG.info("Starting Analytics Server.");
+				
 		BasicConfigurator.configure();
 		
 		new AnalyticsServer();
 		
 		setupRMI();
+		
+		String[] cmd;
+		while(in.hasNext()) {
+			cmd = in.nextLine().split("\\s");
+			if(cmd[0].equals("!exit")) {
+				try {
+					UnicastRemoteObject.unexportObject(analyticsServer, true);
+					LOG.info("Server removed from registry");
+					break;
+				} catch (NoSuchObjectException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		LOG.info("Analytics Server shutting down");
 	}
 
 	private static void setupRMI() {
 		RegistryReader registryLocation = new RegistryReader();
-		AnalyticsServerImpl analyticsServer = new AnalyticsServerImpl();
+		analyticsServer = new AnalyticsServerImpl();
 		try {
 			RegistryCreator.getInstance();
 			AnalyticsServerInterface stub = (AnalyticsServerInterface) UnicastRemoteObject.exportObject(analyticsServer, 0);
+			System.out.println("test");
 			Registry registry = LocateRegistry.getRegistry(registryLocation.getHost(), registryLocation.getPort());
 			registry.bind(bindingName, stub);
 			LOG.info("registry bound");
 		} catch (RemoteException e) {
 			LOG.info("error getting registry");
+			e.printStackTrace();
 		} catch (AlreadyBoundException e) {
 			LOG.info("object already bound");
 		}
 	
 	}
+	
 	
 	
 
