@@ -18,6 +18,7 @@ public interface IBillingServerSecure extends Remote {
 	 * @param endPrice
 	 * @param fixedPrice
 	 * @param variablePricePercent
+	 * @throws RemoteException any of the specified values is negative OR the provided price interval collides (overlaps) with an existing price step
 	 */
 	public void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) throws RemoteException;
 	
@@ -25,6 +26,7 @@ public interface IBillingServerSecure extends Remote {
 	 * allows to delete a price step for the pricing curve
 	 * @param startPrice
 	 * @param endPrice
+	 * @throws RemoteException thrown if the specified interval does not match an existing price step interval
 	 */
 	public void deletePriceStep(double startPrice, double endPrice) throws RemoteException;
 	

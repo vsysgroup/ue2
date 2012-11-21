@@ -7,6 +7,8 @@ import org.apache.log4j.Logger;
 
 public class BillingServerSecureImpl implements IBillingServerSecure, Serializable {
 	
+	public PriceSteps priceSteps = PriceSteps.getInstance();
+	
 	/**
 	 * 
 	 */
@@ -19,19 +21,17 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 	}
 	
 	public PriceSteps getPriceSteps() {
-//		TODO implement
-//		return PriceSteps.getInstance();
-		return null;
+		return priceSteps;
 	}
 	
 	
 	public void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) {
-//		TODO implement
+		priceSteps.createStep(startPrice, endPrice, fixedPrice, variablePricePercent);
 	}
 	
 	
 	public void deletePriceStep(double startPrice, double endPrice) {
-//		TODO implement
+		priceSteps.deleteStep(startPrice, endPrice);
 	}
 	
 	

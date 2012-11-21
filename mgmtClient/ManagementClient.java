@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import registry.RegistryReader;
 
 import billingServer.IBillingServer;
+import billingServer.IBillingServerSecure;
 
 
 /**
@@ -24,7 +25,8 @@ public class ManagementClient {
 	public static final Logger LOG = Logger.getLogger(ManagementClient.class);
 	private static String bindingName = "BillingServer";
 	
-	private static IBillingServer loginHandler = null;
+	private IBillingServer loginHandler = null;
+	private IBillingServerSecure auctionDetails = null;
 	private Scanner in = new Scanner(System.in);
 	
 	/**
@@ -50,7 +52,7 @@ public class ManagementClient {
 				String username = cmd[1];
 				String pw = cmd[2];
 				try {
-					loginHandler.login(username, pw);
+					auctionDetails = loginHandler.login(username, pw);
 					LOG.info("mgmt client logged in");
 				} catch (RemoteException e) {
 					LOG.info("remote login failed");
@@ -61,7 +63,7 @@ public class ManagementClient {
 		}
 	}
 
-	private static void lookupRMI() {
+	private void lookupRMI() {
 		RegistryReader registryLocation = new RegistryReader();
 		
 		try {
