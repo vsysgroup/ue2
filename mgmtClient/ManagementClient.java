@@ -1,10 +1,12 @@
 package mgmtClient;
 
 import java.io.Serializable;
+import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -55,6 +57,12 @@ public class ManagementClient {
 		lookupRMI();
 		
 		Notify notify = new NotificationChecker(this);
+		try {
+			UnicastRemoteObject.exportObject(notify, 0);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		String[] cmd;
 		while(in.hasNext()) {
@@ -127,6 +135,12 @@ public class ManagementClient {
 				printList();
 			}
 			else if(cmd[0].equals("!exit")) {
+				try {
+					UnicastRemoteObject.unexportObject(notify, true);
+				} catch (NoSuchObjectException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 			}
 			else {

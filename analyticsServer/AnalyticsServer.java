@@ -64,7 +64,6 @@ public class AnalyticsServer {
 		try {
 			RegistryCreator.getInstance();
 			AnalyticsServerInterface stub = (AnalyticsServerInterface) UnicastRemoteObject.exportObject(analyticsServer, 0);
-			System.out.println("test");
 			Registry registry = LocateRegistry.getRegistry(registryLocation.getHost(), registryLocation.getPort());
 			registry.bind(bindingName, stub);
 			LOG.info("registry bound");

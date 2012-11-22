@@ -71,7 +71,6 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 		String ID = Integer.toString(newSubscriptionID);
 		Subscription newSubscription = new Subscription(ID, filter, notify);
 		subscriptions.put(ID, newSubscription);
-		LOG.info("mehmehmeh test");
 		return ID;
 	}
 
