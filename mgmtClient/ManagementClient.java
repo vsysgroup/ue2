@@ -18,6 +18,7 @@ import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
 import analyticsServer.Notify;
 import billingServer.IBillingServer;
+import billingServer.IBillingServerSecure;
 
 
 /**
@@ -32,8 +33,11 @@ public class ManagementClient {
 	private static String bindingNameBilling = "BillingServer";
 	private static String bindingNameAnalytics = "AnalyticsServer";
 	
+	private IBillingServerSecure auctionDetails = null;
+
 	private static IBillingServer loginHandler = null;
 	private static AnalyticsServerInterface analyticsHandler = null;
+
 	private Scanner in = new Scanner(System.in);
 	
 	private boolean automaticPrintingOn = false;
@@ -71,7 +75,7 @@ public class ManagementClient {
 				String username = cmd[1];
 				String pw = cmd[2];
 				try {
-					loginHandler.login(username, pw);
+					auctionDetails = loginHandler.login(username, pw);
 					LOG.info("mgmt client logged in");
 				} catch (RemoteException e) {
 					LOG.info("remote login failed");
@@ -150,7 +154,7 @@ public class ManagementClient {
 		LOG.info("Management Client shutting down");
 	}
 
-	private static void lookupRMI() {
+	private void lookupRMI() {
 		RegistryReader registryLocation = new RegistryReader();
 		try {
 			Registry registry = LocateRegistry.getRegistry(registryLocation.getHost(), registryLocation.getPort());
