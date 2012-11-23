@@ -1,6 +1,5 @@
 package mgmtClient;
 
-import java.io.Serializable;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -18,7 +17,6 @@ import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
 import analyticsServer.Notify;
 import billingServer.IBillingServer;
-import billingServer.IBillingServerSecure;
 
 
 /**
@@ -33,11 +31,8 @@ public class ManagementClient {
 	private static String bindingNameBilling = "BillingServer";
 	private static String bindingNameAnalytics = "AnalyticsServer";
 	
-	private IBillingServerSecure auctionDetails = null;
-
 	private static IBillingServer loginHandler = null;
 	private static AnalyticsServerInterface analyticsHandler = null;
-
 	private Scanner in = new Scanner(System.in);
 	
 	private boolean automaticPrintingOn = false;
@@ -75,26 +70,44 @@ public class ManagementClient {
 				String username = cmd[1];
 				String pw = cmd[2];
 				try {
-					auctionDetails = loginHandler.login(username, pw);
+					loginHandler.login(username, pw);
 					LOG.info("mgmt client logged in");
 				} catch (RemoteException e) {
 					LOG.info("remote login failed");
 				}
 			}
 			else if(cmd[0].equals("!steps")) {
-				//TODO implement
+				String message = "";
+				//TODO call BillingServer for steps
+				LOG.info(message);
 			}
 			else if(cmd[0].equals("!addStep")) {
-				//TODO implement
+				if(cmd.length != 5) {
+					LOG.error("Wrong parameters");
+				} else {
+					//TODO call BillingServer for addStep
+				}
 			}
 			else if(cmd[0].equals("!removeStep")) {
-				//TODO implement
+				if(cmd.length != 3) {
+					LOG.error("Wrong parameters");
+				} else {
+					//TODO call BillingServer for removeStep
+				}
 			}
 			else if(cmd[0].equals("!bill")) {
-				//TODO implement
+				if(cmd.length != 2) {
+					LOG.error("Wrong parameters");
+				} else {
+					//TODO call BillingServer for bill
+				}
 			}
 			else if(cmd[0].equals("!logout")) {
-				//TODO implement
+				if(cmd.length != 1) {
+					LOG.error("Wrong parameters");
+				} else {
+					//TODO call BillingServer for logout
+				}
 			}
 			else if(cmd[0].equals("!subscribe")) {
 				if(cmd.length != 2) {
@@ -107,7 +120,6 @@ public class ManagementClient {
 						subscriptions.add(subscriptionID);
 						LOG.info("Created subscription with ID " + subscriptionID + " for events using filter " + filterRegex);
 					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
@@ -123,7 +135,6 @@ public class ManagementClient {
 						subscriptions.remove(subscriptions.indexOf(subscriptionID));
 						LOG.info("subscription " + subscriptionID + " terminated");
 					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
@@ -142,7 +153,6 @@ public class ManagementClient {
 				try {
 					UnicastRemoteObject.unexportObject(notify, true);
 				} catch (NoSuchObjectException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				break;
@@ -154,7 +164,7 @@ public class ManagementClient {
 		LOG.info("Management Client shutting down");
 	}
 
-	private void lookupRMI() {
+	private static void lookupRMI() {
 		RegistryReader registryLocation = new RegistryReader();
 		try {
 			Registry registry = LocateRegistry.getRegistry(registryLocation.getHost(), registryLocation.getPort());
@@ -173,13 +183,9 @@ public class ManagementClient {
 		} catch (RemoteException e) {
 			LOG.info("problem occurred trying to get registry");
 		}
-		
-		
-		
-		
 	}
 	
-	public boolean isAutomaticPrintingOn() {
+	private boolean isAutomaticPrintingOn() {
 		return automaticPrintingOn;
 	}
 	
@@ -189,8 +195,16 @@ public class ManagementClient {
 		}
 	}
 	
-	public void storeMessage(String message) {
+	private void storeMessage(String message) {
 		storedMessages.add(message);
 	}
 
+	public void inbox(String message) {
+		if(isAutomaticPrintingOn()) {
+			LOG.info(message);
+		}
+		else {
+			storeMessage(message);
+		}	
+	}
 }

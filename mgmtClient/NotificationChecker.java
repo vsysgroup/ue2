@@ -2,6 +2,8 @@ package mgmtClient;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Calendar;
+import java.util.Date;
 
 import analyticsServer.AuctionEvent;
 import analyticsServer.BidEvent;
@@ -32,64 +34,125 @@ public class NotificationChecker implements Notify, Serializable {
 	public void notify(Event event) throws RemoteException {
 		if(event instanceof AuctionEvent) {
 			if(event.getType().equals("AUCTION_STARTED")) {
-				//TODO Implement
+				AuctionEvent auctionEvent = (AuctionEvent) event;
+				String message = buildMessage(auctionEvent.getType(), timeStampToString(auctionEvent.getTimeStamp()), "Auction with ID " + auctionEvent.getAuctionID() + " started");
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("AUCTION_ENDED")) {
-				//TODO Implement
+				AuctionEvent auctionEvent = (AuctionEvent) event;
+				String message = buildMessage(auctionEvent.getType(), timeStampToString(auctionEvent.getTimeStamp()), "Auction with ID " + auctionEvent.getAuctionID() + " ended");
+				managementClient.inbox(message);
 			}
 		}
 		
 		//BidEvent
 		else if(event instanceof BidEvent) {
 			if(event.getType().equals("BID_PLACED")) {
-				//TODO Implement
+				BidEvent bidEvent = (BidEvent) event;
+				String message = buildMessage(bidEvent.getType(), timeStampToString(bidEvent.getTimeStamp()), "User " + bidEvent.getUserName() + " placed bid " + bidEvent.getPrice() + " on Auction " + bidEvent.getAuctionID());
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("BID_OVERBID")) {
-				//TODO Implement
+				BidEvent bidEvent = (BidEvent) event;
+				String message = buildMessage(bidEvent.getType(), timeStampToString(bidEvent.getTimeStamp()), "User " + bidEvent.getUserName() + "has been overbid on Auction " + bidEvent.getAuctionID());
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("BID_WON")) {
-				//TODO Implement
+				BidEvent bidEvent = (BidEvent) event;
+				String message = buildMessage(bidEvent.getType(), timeStampToString(bidEvent.getTimeStamp()), "User " + bidEvent.getUserName() + " won Auction " + bidEvent.getAuctionID() + " with " + bidEvent.getPrice());
+				managementClient.inbox(message);
 			}
 		}
 		
 		//StatisticsEvent
 		else if(event instanceof StatisticsEvent) {
 			if(event.getType().equals("USER_SESSIONTIME_MIN")) {
-				//TODO Implement
+				StatisticsEvent statisticsEvent = (StatisticsEvent) event;
+				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "minimum session time is " + statisticsEvent.getValue() + " seconds");
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("USER_SESSIONTIME_MAX")) {
-				//TODO Implement
+				StatisticsEvent statisticsEvent = (StatisticsEvent) event;
+				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "maximum session time is " + statisticsEvent.getValue() + " seconds");
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("USER_SESSIONTIME_AVG")) {
-				//TODO Implement
+				StatisticsEvent statisticsEvent = (StatisticsEvent) event;
+				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "average session time is " + statisticsEvent.getValue() + " seconds");
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("BID_PRICE_MAX")) {
-				//TODO Implement
+				StatisticsEvent statisticsEvent = (StatisticsEvent) event;
+				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "maximum price seen so far is" + statisticsEvent.getValue());
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("BID_COUNT_PER_MINUTE")) {
-				//TODO Implement
+				StatisticsEvent statisticsEvent = (StatisticsEvent) event;
+				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "current bids per minute is " + statisticsEvent.getValue());
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("AUCTION_TIME_AVG")) {
-				//TODO Implement
+				StatisticsEvent statisticsEvent = (StatisticsEvent) event;
+				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "average auction time is " + statisticsEvent.getValue() + " seconds");
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("AUCTION_SUCCESS_RATIO")) {
-				//TODO Implement
+				StatisticsEvent statisticsEvent = (StatisticsEvent) event;
+				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "current auction success ration is " + statisticsEvent.getValue());
+				managementClient.inbox(message);
 			}
 		}
 		
 		//UserEvent
 		else if(event instanceof UserEvent) {
 			if(event.getType().equals("USER_LOGIN")) {
-				//TODO Implement
+				UserEvent userEvent = (UserEvent) event;
+				String message = buildMessage(userEvent.getType(), timeStampToString(userEvent.getTimeStamp()), "user " + userEvent.getUserName() + " has logged in");
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("USER_LOGOUT")) {
-				//TODO Implement
+				UserEvent userEvent = (UserEvent) event;
+				String message = buildMessage(userEvent.getType(), timeStampToString(userEvent.getTimeStamp()), "user " + userEvent.getUserName() + " has logged out");
+				managementClient.inbox(message);
 			}
 			else if(event.getType().equals("USER_DISCONNECTED")) {
-				//TODO Implement
+				UserEvent userEvent = (UserEvent) event;
+				String message = buildMessage(userEvent.getType(), timeStampToString(userEvent.getTimeStamp()), "user " + userEvent.getUserName() + " has disconnected");
+				managementClient.inbox(message);
 			}
 		}
+	}
+	
+	private String timeStampToString(long timeStamp) {
+		String returnString = "";
 		
+		Date date = new Date();
+		date.setTime(timeStamp);
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		
+		int day = calendar.get(Calendar.DATE);
+		int month = calendar.get(Calendar.MONTH) + 1;
+		int year = calendar.get(Calendar.YEAR);
+		
+		int hours = calendar.get(Calendar.HOUR);
+		int minutes = calendar.get(Calendar.MINUTE);
+		int seconds = calendar.get(Calendar.SECOND);
+		
+		String timezone = "CET";
+		
+		returnString = day + "." + month + "." + year + " " + hours + ":" + minutes + ":" + seconds + " " + timezone;
+		
+		return returnString;
+	}
+	
+	private String buildMessage(String type, String time, String message) {
+		String returnString = "";
+		
+		returnString += type + ": " + time + " - " + message;
+		
+		return returnString;
 	}
 
 }

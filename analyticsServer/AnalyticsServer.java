@@ -50,7 +50,6 @@ public class AnalyticsServer {
 					LOG.info("Server removed from registry");
 					break;
 				} catch (NoSuchObjectException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
