@@ -201,13 +201,19 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 	
 	public void sendThroughFilter(Event event, String filter) {
 		//TODO: Better filtering through java regex
+//		Iterator<?> iter = subscriptions.entrySet().iterator();
+//		while(iter.hasNext()) {
+//			Entry<?, ?> pair = (Entry<?, ?>) iter.next();
+//			Subscription currentSubscription = (Subscription) pair.getValue();
+//			if(currentSubscription.containsFilter(filter) || currentSubscription.getNumberOfFilters() == 0) {
+//				currentSubscription.notify(event);
+//			}
+//		}
 		Iterator<?> iter = subscriptions.entrySet().iterator();
 		while(iter.hasNext()) {
 			Entry<?, ?> pair = (Entry<?, ?>) iter.next();
 			Subscription currentSubscription = (Subscription) pair.getValue();
-			if(currentSubscription.containsFilter(filter) || currentSubscription.getNumberOfFilters() == 0) {
-				currentSubscription.notify(event);
-			}
+			currentSubscription.notify(event);
 		}
 	}
 	

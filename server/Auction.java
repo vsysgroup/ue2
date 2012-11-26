@@ -66,9 +66,9 @@ public class Auction {
 				highestBid = amount;
 				User previousHighest = highestBidder;
 				highestBidder = bidder;
-				server.bidSuccessful(bidder, amount, description);
+				server.bidSuccessful(bidder, amount, description, ID);
 				if(previousHighest != null) {
-					server.userOverbid(previousHighest, description);
+					server.userOverbid(previousHighest, amount, description, ID);
 				}
 				
 			}
@@ -82,7 +82,7 @@ public class Auction {
 				User previousHighest = highestBidder;
 				highestBidder = bidder;
 				if(previousHighest != null) {
-					server.userOverbid(previousHighest, description);
+					server.userOverbid(previousHighest, amount, description, ID);
 				}
 			}
 			else{

@@ -59,7 +59,6 @@ public class ManagementClient {
 		try {
 			UnicastRemoteObject.exportObject(notify, 0);
 		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
