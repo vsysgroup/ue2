@@ -141,9 +141,11 @@ public class ManagementClient {
 			}
 			else if(cmd[0].equals("!auto")) {
 				automaticPrintingOn = true;
+				LOG.info("Automatic printing is ON");
 			}
 			else if(cmd[0].equals("!hide")) {
 				automaticPrintingOn = false;
+				LOG.info("Automatic printing is OFF");
 			}
 			else if(cmd[0].equals("!print")) {
 				printList();
@@ -184,14 +186,11 @@ public class ManagementClient {
 		}
 	}
 	
-	private boolean isAutomaticPrintingOn() {
-		return automaticPrintingOn;
-	}
-	
 	private void printList() {
 		for(int i = 0; i < storedMessages.size(); i++) {
-			LOG.info(storedMessages.get(i));
+			System.out.println(storedMessages.get(i));
 		}
+		storedMessages.clear();
 	}
 	
 	private void storeMessage(String message) {
@@ -199,8 +198,8 @@ public class ManagementClient {
 	}
 
 	public void inbox(String message) {
-		if(isAutomaticPrintingOn()) {
-			LOG.info(message);
+		if(automaticPrintingOn) {
+			System.out.println(message);
 		}
 		else {
 			storeMessage(message);

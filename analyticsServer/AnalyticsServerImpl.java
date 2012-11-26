@@ -70,18 +70,19 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 
 	@Override
 	public void processEvent(Event event) {
+		LOG.info("new Event - " + event.getType());
 		
 		//AuctionEvent
 		if(event instanceof AuctionEvent) {
 			String filter = "(AUCTION_.*)";
 			if(event.getType().equals("AUCTION_STARTED")) {
-				startAuction((AuctionEvent) event);
 				sendThroughFilter(event, filter);
+				startAuction((AuctionEvent) event);
 			}
 			else if(event.getType().equals("AUCTION_ENDED")) {
+				sendThroughFilter(event, filter);
 				endAuction((AuctionEvent) event);
 				auctionSuccessRatio();
-				sendThroughFilter(event, filter);
 			}
 		}
 		
@@ -89,8 +90,8 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 		else if(event instanceof BidEvent) {
 			String filter = "(BID_.*)";
 			if(event.getType().equals("BID_PLACED")) {
-				bidPlaced((BidEvent) event);
 				sendThroughFilter(event, filter);
+				bidPlaced((BidEvent) event);
 			}
 			else if(event.getType().equals("BID_OVERBID")) {
 				sendThroughFilter(event, filter);
@@ -164,9 +165,12 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 	}
 
 	private void auctionSuccessRatio() {
-		totalSuccessfulAuctionRatio = totalNumberOfAuctions/totalNumberOfSuccessfulAuctions;
-		processEvent(new StatisticsEvent("AUCTION_SUCCESS_RATIO", totalSuccessfulAuctionRatio));
-		
+		if(totalNumberOfSuccessfulAuctions == 0) {
+			processEvent(new StatisticsEvent("AUCTION_SUCCESS_RATIO", 0));
+		} else {
+			totalSuccessfulAuctionRatio = totalNumberOfSuccessfulAuctions/totalNumberOfAuctions;
+			processEvent(new StatisticsEvent("AUCTION_SUCCESS_RATIO", totalSuccessfulAuctionRatio));
+		}
 	}
 
 	private void bidWon(BidEvent event) {

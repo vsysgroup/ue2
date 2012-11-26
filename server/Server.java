@@ -33,7 +33,7 @@ import exception.WrongParameterCountException;
  */
 public class Server {
 	
-	public static final Logger LOG = Logger.getLogger(ManagementClient.class);
+	public static final Logger LOG = Logger.getLogger(Server.class);
 	private static String bindingNameAnalytics = "AnalyticsServer";
 
 
