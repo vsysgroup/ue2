@@ -18,6 +18,10 @@ import mgmtClient.ManagementClient;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+import billingServer.BillingServerSecureImpl;
+import billingServer.IBillingServer;
+import billingServer.IBillingServerSecure;
+
 import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
 import analyticsServer.AuctionEvent;
@@ -35,7 +39,7 @@ public class Server {
 	
 	public static final Logger LOG = Logger.getLogger(Server.class);
 	private static String bindingNameAnalytics = "AnalyticsServer";
-
+	private static String bindingNameBilling = "BillingServer";
 
 	private int tcpPort;
 	private boolean serverStatus = false;
@@ -47,7 +51,8 @@ public class Server {
 	private Scanner in = new Scanner(System.in);
 
 	private static AnalyticsServerInterface analyticsHandler = null;
-
+	private static IBillingServer loginHandler = null;
+	private static IBillingServerSecure billingHandler = null;
 
 	public static void main(String[] args) {
 		
@@ -366,8 +371,12 @@ public class Server {
 		User winner = currentAuction.getWinner();
 		double winningBid = currentAuction.getWinningBid();
 		String description = currentAuction.getDescription();
+		
 		try {
 			analyticsHandler.processEvent(new AuctionEvent("AUCTION_ENDED", (long) currentAuction.getID()));
+			//register new bill for auction owner on billingServer
+			billingHandler = loginHandler.login("auctionClientUser", "dslab2012");
+			billingHandler.billAuction(currentAuction.getOwner().getUsername(), currentAuction.getID(), winningBid);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -476,6 +485,7 @@ public class Server {
 			Registry registry = LocateRegistry.getRegistry(registryLocation.getHost(), registryLocation.getPort());
 			try {
 				analyticsHandler = (AnalyticsServerInterface) registry.lookup(bindingNameAnalytics);
+				loginHandler = (IBillingServer) registry.lookup(bindingNameBilling);
 				LOG.info("AnalyticsServer looked up");
 			} catch (NotBoundException e) {
 				LOG.info("this remote object doesnt exist / hasnt been bound - AnalyticsServer");
