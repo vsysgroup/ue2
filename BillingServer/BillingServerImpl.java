@@ -53,5 +53,16 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 		return false;
 	}
 	
-	//TODO create hash for static userpasswords
+	//create hash for static userpasswords; never used by program
+	@SuppressWarnings("unused")
+	private void getPasswordHash() {
+		String password = "alice123";
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] hash = md.digest(password.getBytes());
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

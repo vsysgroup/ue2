@@ -108,12 +108,14 @@ public class ManagementClient {
 					System.out.println("Expected parameters: startPrice, endPrice");
 					LOG.error("Wrong parameters");
 				} else {
-					double startPrice = Double.parseDouble(cmd[1]);
-					double endPrice = Double.parseDouble(cmd[2]);
 					try {
+						double startPrice = Double.parseDouble(cmd[1]);
+						double endPrice = Double.parseDouble(cmd[2]);
 						billingHandler.deletePriceStep(startPrice, endPrice);
 					} catch (RemoteException e) {
 						LOG.error("delete price step failed");
+					} catch (NumberFormatException e) {
+						System.out.println("wrong number format - supposed to be double");
 					}
 				}
 			}
