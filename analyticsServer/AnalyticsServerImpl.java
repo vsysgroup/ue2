@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.*;
 
 import org.apache.log4j.Logger;
 
@@ -53,7 +54,7 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 	private static int newSubscriptionID = 0;
 	
 	private boolean status = true;
-	
+		
 	public AnalyticsServerImpl() {
 		Date date = new Date();
 		serverStartingTime = date.getTime();
@@ -70,7 +71,6 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 
 	@Override
 	public void processEvent(Event event) {
-		LOG.info("new Event - " + event.getType());
 		
 		//AuctionEvent
 		if(event instanceof AuctionEvent) {
@@ -157,9 +157,9 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 		serverTimePassed = serverCurrentTime - serverStartingTime;
 		serverMinutesPassed = (int) (serverTimePassed/60000);
 		if(serverMinutesPassed == 0) {
-			totalBidsPerMinute = totalAmountOfBids;
+			totalBidsPerMinute = (double) totalAmountOfBids;
 		}else {
-			totalBidsPerMinute = totalAmountOfBids/serverMinutesPassed;
+			totalBidsPerMinute = (double) totalAmountOfBids/ (double) serverMinutesPassed;
 		}
 		processEvent(new StatisticsEvent("BID_COUNT_PER_MINUTE", totalBidsPerMinute));
 	}
@@ -168,7 +168,7 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 		if(totalNumberOfSuccessfulAuctions == 0) {
 			processEvent(new StatisticsEvent("AUCTION_SUCCESS_RATIO", 0));
 		} else {
-			totalSuccessfulAuctionRatio = totalNumberOfSuccessfulAuctions/totalNumberOfAuctions;
+			totalSuccessfulAuctionRatio = (double) totalNumberOfSuccessfulAuctions/ (double) totalNumberOfAuctions;
 			processEvent(new StatisticsEvent("AUCTION_SUCCESS_RATIO", totalSuccessfulAuctionRatio));
 		}
 	}
@@ -203,21 +203,19 @@ public class AnalyticsServerImpl implements AnalyticsServerInterface, Serializab
 		processEvent(new StatisticsEvent("USER_SESSIONTIME_AVG", totalAvgSessionTime));
 	}
 	
-	public void sendThroughFilter(Event event, String filter) {
-		//TODO: Better filtering through java regex
-//		Iterator<?> iter = subscriptions.entrySet().iterator();
-//		while(iter.hasNext()) {
-//			Entry<?, ?> pair = (Entry<?, ?>) iter.next();
-//			Subscription currentSubscription = (Subscription) pair.getValue();
-//			if(currentSubscription.containsFilter(filter) || currentSubscription.getNumberOfFilters() == 0) {
-//				currentSubscription.notify(event);
-//			}
-//		}
+	public void sendThroughFilter(Event event, String filter) {		
 		Iterator<?> iter = subscriptions.entrySet().iterator();
 		while(iter.hasNext()) {
-			Entry<?, ?> pair = (Entry<?, ?>) iter.next();
+			Entry<?,?> pair = (Entry<?, ?>) iter.next();
 			Subscription currentSubscription = (Subscription) pair.getValue();
-			currentSubscription.notify(event);
+			String[] currentFilters = currentSubscription.getFilters();
+			for(int i = 0; i < currentFilters.length; i++) {
+				Pattern pattern = Pattern.compile(currentFilters[i]);
+				Matcher matcher = pattern.matcher(event.getType());
+				if(matcher.find()) {
+					currentSubscription.notify(event);
+				}
+			}
 		}
 	}
 	

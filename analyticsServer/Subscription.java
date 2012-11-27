@@ -21,7 +21,10 @@ public class Subscription {
 		this.ID = ID;
 		this.filter = filter;
 		this.notify = notify;
-		String[] filters = filter.split("|");
+		String cleanFilter =filter.replaceAll("'", "");
+		cleanFilter = cleanFilter.replaceAll("\\(", "");
+		cleanFilter = cleanFilter.replaceAll("\\)", "");
+		String[] filters = cleanFilter.split("\\|");
 		this.filters = filters;
 		this.numberOfFilters = filters.length;
 	}
@@ -30,7 +33,6 @@ public class Subscription {
 		try {
 			notify.notify(event);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
