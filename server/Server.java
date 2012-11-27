@@ -372,12 +372,15 @@ public class Server {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		try {
-			analyticsHandler.processEvent(new BidEvent("BID_WON", winner.getUsername(), (long) currentAuction.getID(), winningBid));
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(winner != null) {
+			try {
+				analyticsHandler.processEvent(new BidEvent("BID_WON", winner.getUsername(), (long) currentAuction.getID(), winningBid));
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
 		for(int i = 0; i < bidders.size(); i++) {
 			if(!bidders.get(i).loggedIn()) {
 				if(bidders.get(i).getUsername().equals(winner.getUsername())) {
