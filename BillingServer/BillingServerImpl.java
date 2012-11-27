@@ -27,7 +27,7 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 			return null;
 		}
 		//export remote
-		BillingServerSecureImpl billingServerAccess = new BillingServerSecureImpl(); 
+		BillingServerSecureImpl billingServerAccess = BillingServerSecureImpl.getInstance(); 
 		UnicastRemoteObject.exportObject(billingServerAccess, 0);
 		return billingServerAccess;
 	}
