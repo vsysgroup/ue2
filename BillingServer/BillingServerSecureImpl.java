@@ -27,7 +27,6 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 	
 	
 	public void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) {
-		//TODO throw RE if types are not double
 		priceSteps.createStep(startPrice, endPrice, fixedPrice, variablePricePercent);
 	}
 	

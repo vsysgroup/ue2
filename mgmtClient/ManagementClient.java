@@ -31,14 +31,14 @@ public class ManagementClient {
 	public static final Logger LOG = Logger.getLogger(ManagementClient.class);
 	private static String bindingNameBilling = "BillingServer";
 	private static String bindingNameAnalytics = "AnalyticsServer";
-	
+
 	private static IBillingServer loginHandler = null;
 	private IBillingServerSecure billingHandler = null;
 	private static AnalyticsServerInterface analyticsHandler = null;
 	private Scanner in = new Scanner(System.in);
-	
+
 	private boolean automaticPrintingOn = false;
-	
+
 	private ArrayList<String> subscriptions = new ArrayList<String>();
 	private ArrayList<String> storedMessages = new ArrayList<String>();
 	/**
@@ -51,19 +51,19 @@ public class ManagementClient {
 
 		new ManagementClient();
 	}
-	
+
 	private ManagementClient() {
 		LOG.info("Starting Management Client");
-		
+
 		lookupRMI();
-		
+
 		Notify notify = new NotificationChecker(this);
 		try {
 			UnicastRemoteObject.exportObject(notify, 0);
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		String[] cmd;
 		while(in.hasNext()) {
 			cmd = in.nextLine().split("\\s");
@@ -78,7 +78,6 @@ public class ManagementClient {
 				}
 			}
 			else if(cmd[0].equals("!steps")) {
-				//TODO call BillingServer for steps
 				try {
 					System.out.println(billingHandler.getPriceSteps());
 				} catch (RemoteException e) {
@@ -91,15 +90,16 @@ public class ManagementClient {
 					System.out.println("Expected parameters: startPrice, endPrice, fixedPrice, variablePricePercent");
 					LOG.error("Wrong parameters");
 				} else {
-					//TODO call BillingServer for addStep
-					double startPrice = Double.parseDouble(cmd[1]);
-					double endPrice = Double.parseDouble(cmd[2]);
-					double fixedPrice = Double.parseDouble(cmd[3]);
-					double variablePricePercent = Double.parseDouble(cmd[4]);
 					try {
+						double startPrice = Double.parseDouble(cmd[1]);
+						double endPrice = Double.parseDouble(cmd[2]);
+						double fixedPrice = Double.parseDouble(cmd[3]);
+						double variablePricePercent = Double.parseDouble(cmd[4]);
 						billingHandler.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
 					} catch (RemoteException e) {
 						LOG.error("create price steps failed");
+					} catch (NumberFormatException e) {
+						System.out.println("wrong number format - supposed to be double");
 					}
 				}
 			}
@@ -108,7 +108,6 @@ public class ManagementClient {
 					System.out.println("Expected parameters: startPrice, endPrice");
 					LOG.error("Wrong parameters");
 				} else {
-					//TODO call BillingServer for removeStep
 					double startPrice = Double.parseDouble(cmd[1]);
 					double endPrice = Double.parseDouble(cmd[2]);
 					try {
@@ -123,7 +122,6 @@ public class ManagementClient {
 					System.out.println("Expected parameters: username");
 					LOG.error("Wrong parameters");
 				} else {
-					//TODO call BillingServer for bill
 					String user = cmd[1];
 					try {
 						billingHandler.getBill(user);
@@ -152,7 +150,7 @@ public class ManagementClient {
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
-					
+
 				}
 			}
 			else if(cmd[0].equals("!unsubscribe")) {
@@ -167,7 +165,7 @@ public class ManagementClient {
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
-					
+
 				}
 			}
 			else if(cmd[0].equals("!auto")) {
@@ -216,14 +214,14 @@ public class ManagementClient {
 			LOG.info("problem occurred trying to get registry");
 		}
 	}
-	
+
 	private void printList() {
 		for(int i = 0; i < storedMessages.size(); i++) {
 			System.out.println(storedMessages.get(i));
 		}
 		storedMessages.clear();
 	}
-	
+
 	private void storeMessage(String message) {
 		storedMessages.add(message);
 	}

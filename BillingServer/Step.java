@@ -42,6 +42,10 @@ public class Step {
 	public void setVariablePricePercent(double variablePricePercent) {
 		this.variablePricePercent = variablePricePercent;
 	}
-	
+
+	@Override
+	public String toString() {
+		return startPrice + "\t" + endPrice + "\t" + fixedPrice + "\t" + variablePricePercent + "%";
+	}
 	
 }
