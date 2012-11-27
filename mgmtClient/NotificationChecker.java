@@ -41,6 +41,8 @@ public class NotificationChecker implements Notify, Serializable {
 
 	@Override
 	public void notify(Event event) throws RemoteException {
+		
+		checkForSpace();
 
 		if(event instanceof AuctionEvent) {
 			if(event.getType().equals("AUCTION_STARTED")) {
@@ -118,7 +120,7 @@ public class NotificationChecker implements Notify, Serializable {
 			}
 			else if(event.getType().equals("BID_PRICE_MAX")) {
 				StatisticsEvent statisticsEvent = (StatisticsEvent) event;
-				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "maximum price seen so far is" + statisticsEvent.getValue());
+				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "maximum price seen so far is " + statisticsEvent.getValue());
 				if(!knownStatisticsEvents.contains(event.getID())) {
 					knownStatisticsEvents.add(event.getID());
 					managementClient.inbox(message);
@@ -142,7 +144,7 @@ public class NotificationChecker implements Notify, Serializable {
 			}
 			else if(event.getType().equals("AUCTION_SUCCESS_RATIO")) {
 				StatisticsEvent statisticsEvent = (StatisticsEvent) event;
-				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "current auction success ration is " + statisticsEvent.getValue());
+				String message = buildMessage(statisticsEvent.getType(), timeStampToString(statisticsEvent.getTimeStamp()), "current auction success ratio is " + statisticsEvent.getValue());
 				if(!knownStatisticsEvents.contains(event.getID())) {
 					knownStatisticsEvents.add(event.getID());
 					managementClient.inbox(message);
@@ -176,6 +178,29 @@ public class NotificationChecker implements Notify, Serializable {
 		}
 	}
 	
+	private void checkForSpace() {
+		if(knownAuctionEvents.size()>1000) {
+			for(int i = 0; i < 500; i++) {
+				knownAuctionEvents.remove(0);
+			}
+		}
+		if(knownUserEvents.size()>1000) {
+			for(int i = 0; i < 500; i++) {
+				knownUserEvents.remove(0);
+			}
+		}
+		if(knownBidEvents.size()>1000) {
+			for(int i = 0; i < 500; i++) {
+				knownBidEvents.remove(0);
+			}
+		}
+		if(knownStatisticsEvents.size()>1000) {
+			for(int i = 0; i < 500; i++) {
+				knownStatisticsEvents.remove(0);
+			}
+		}
+	}
+
 	private String timeStampToString(long timeStamp) {
 		String returnString = "";
 		
