@@ -1,6 +1,7 @@
 package billingServer;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
@@ -20,12 +21,13 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 		LOG.info("i was called YIHAA");
 	}
 	
-	public PriceSteps getPriceSteps() {
+	public PriceSteps getPriceSteps() throws RemoteException {
 		return priceSteps;
 	}
 	
 	
 	public void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) {
+		//TODO throw RE if types are not double
 		priceSteps.createStep(startPrice, endPrice, fixedPrice, variablePricePercent);
 	}
 	

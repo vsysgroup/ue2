@@ -17,11 +17,12 @@ import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
 import analyticsServer.Notify;
 import billingServer.IBillingServer;
+import billingServer.IBillingServerSecure;
 
 
 /**
  * management client connects to analytics server and billing server via rmi
- * @author Babz
+ * @author Barbara Schwankl 0852176
  * @author Philipp Pfeiffer 0809357
  *
  */
@@ -32,6 +33,7 @@ public class ManagementClient {
 	private static String bindingNameAnalytics = "AnalyticsServer";
 	
 	private static IBillingServer loginHandler = null;
+	private IBillingServerSecure billingHandler = null;
 	private static AnalyticsServerInterface analyticsHandler = null;
 	private Scanner in = new Scanner(System.in);
 	
@@ -69,36 +71,65 @@ public class ManagementClient {
 				String username = cmd[1];
 				String pw = cmd[2];
 				try {
-					loginHandler.login(username, pw);
+					billingHandler = loginHandler.login(username, pw);
 					LOG.info("mgmt client logged in");
 				} catch (RemoteException e) {
-					LOG.info("remote login failed");
+					LOG.error("remote login failed");
 				}
 			}
 			else if(cmd[0].equals("!steps")) {
-				String message = "";
 				//TODO call BillingServer for steps
-				LOG.info(message);
+				try {
+					System.out.println(billingHandler.getPriceSteps());
+				} catch (RemoteException e) {
+					LOG.error("couldnt get price steps");
+				}
+				LOG.info("listed price steps");
 			}
 			else if(cmd[0].equals("!addStep")) {
 				if(cmd.length != 5) {
+					System.out.println("Expected parameters: startPrice, endPrice, fixedPrice, variablePricePercent");
 					LOG.error("Wrong parameters");
 				} else {
 					//TODO call BillingServer for addStep
+					double startPrice = Double.parseDouble(cmd[1]);
+					double endPrice = Double.parseDouble(cmd[2]);
+					double fixedPrice = Double.parseDouble(cmd[3]);
+					double variablePricePercent = Double.parseDouble(cmd[4]);
+					try {
+						billingHandler.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
+					} catch (RemoteException e) {
+						LOG.error("create price steps failed");
+					}
 				}
 			}
 			else if(cmd[0].equals("!removeStep")) {
 				if(cmd.length != 3) {
+					System.out.println("Expected parameters: startPrice, endPrice");
 					LOG.error("Wrong parameters");
 				} else {
 					//TODO call BillingServer for removeStep
+					double startPrice = Double.parseDouble(cmd[1]);
+					double endPrice = Double.parseDouble(cmd[2]);
+					try {
+						billingHandler.deletePriceStep(startPrice, endPrice);
+					} catch (RemoteException e) {
+						LOG.error("delete price step failed");
+					}
 				}
 			}
 			else if(cmd[0].equals("!bill")) {
 				if(cmd.length != 2) {
+					System.out.println("Expected parameters: username");
 					LOG.error("Wrong parameters");
 				} else {
 					//TODO call BillingServer for bill
+					String user = cmd[1];
+					try {
+						billingHandler.getBill(user);
+					} catch (RemoteException e) {
+						LOG.error("getting bill failed");
+					}
 				}
 			}
 			else if(cmd[0].equals("!logout")) {

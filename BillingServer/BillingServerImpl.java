@@ -53,4 +53,5 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 		return false;
 	}
 	
+	//TODO create hash for static userpasswords
 }
