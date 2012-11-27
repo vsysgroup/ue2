@@ -16,7 +16,7 @@ import registry.RegistryReader;
 
 import analyticsServer.AnalyticsServerInterface;
 import analyticsServer.Notify;
-import billingServer.Bill;
+import billingServer.BillEntry;
 import billingServer.IBillingServer;
 import billingServer.IBillingServerSecure;
 
@@ -145,7 +145,7 @@ public class ManagementClient {
 					} else {
 						String user = cmd[1];
 						try {
-							Bill bill = billingHandler.getBill(user);
+							System.out.println(billingHandler.getBill(user));
 							//TODO bill.toString ausgeben
 						} catch (RemoteException e) {
 							LOG.error("getting bill failed");

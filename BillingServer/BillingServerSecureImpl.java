@@ -2,8 +2,8 @@ package billingServer;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -17,7 +17,7 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 	private static BillingServerSecureImpl instance = null;
 	public static final Logger LOG = Logger.getLogger(BillingServerSecureImpl.class);
 	private PriceSteps priceSteps = PriceSteps.getInstance();
-	private List<Bill> userBills = new ArrayList<Bill>();
+	private Map<String, Bill> userBills = new HashMap<String, Bill>();
 	
 	public static synchronized BillingServerSecureImpl getInstance() {
 		if(instance == null) {
@@ -46,16 +46,19 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 	
 	
 	public void billAuction(String user, long auctionID, double price) {
-		userBills.add(new Bill(user, auctionID, price));
+		Bill bill = userBills.get(user);
+		if(bill == null) {
+			bill = new Bill();
+			bill.setUser(user);
+			userBills.put(user, bill);
+		}
+		bill.addBillEntry(auctionID, price);		
 	}
 	
 	
 	public Bill getBill(String user) {
-//		for(Bill b: userBills) {
-//			if(user.equals(b.getUser())) {
-//				
-//			}
-//		}
-		return null;
+		Bill bill = userBills.get(user);
+		bill.compute(priceSteps);
+		return bill;
 	}
 }

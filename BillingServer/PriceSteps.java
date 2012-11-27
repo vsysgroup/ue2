@@ -2,6 +2,7 @@ package billingServer;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -21,6 +22,8 @@ public class PriceSteps {
 		}
 		return instance;
 	}
+	
+	public Set<Step> getSteps() { return allPriceSteps; }
 
 	private PriceSteps() {}
 

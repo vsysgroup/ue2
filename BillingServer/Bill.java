@@ -1,22 +1,12 @@
 package billingServer;
 
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * stores all billing lines of a given user
- * @author Babz
- *
- */
 public class Bill {
 
 	private String user;
-	private long auctionID;
-	private double price;
-
-	public Bill(String user, long auctionID, double price) {
-		this.user = user;
-		this.auctionID = auctionID;
-		this.price = price;
-	}
+	private List<BillEntry> allBills = new ArrayList<BillEntry>();
 
 	public String getUser() {
 		return user;
@@ -25,20 +15,23 @@ public class Bill {
 	public void setUser(String user) {
 		this.user = user;
 	}
-
-	public long getAuctionID() {
-		return auctionID;
+	
+	public void addBillEntry(long auctionID, double price) {
+		allBills.add(new BillEntry(auctionID, price));
 	}
 
-	public void setAuctionID(long auctionID) {
-		this.auctionID = auctionID;
+	public void compute(PriceSteps priceSteps) {
+		for(BillEntry entry : allBills) {
+			entry.compute(priceSteps);
+		}
 	}
-
-	public double getPrice() {
-		return price;
-	}
-
-	public void setPrice(double price) {
-		this.price = price;
+	
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("auction_ID" + "\t" + "strike_price" + "\t" + "fee_fixed" + "\t" + "fee_variable" + "\t" + "fee_total");
+		for(BillEntry entry: allBills) {
+			buffer.append(entry.toString() + "\n");
+		}
+		return buffer.toString();
 	}
 }
