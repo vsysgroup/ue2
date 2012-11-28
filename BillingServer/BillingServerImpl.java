@@ -35,7 +35,6 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 	}
 
 	private boolean checkAuthentification(String name, String pw) {
-		getPasswordHash();
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance("MD5");
