@@ -40,7 +40,7 @@ public class PriceSteps implements Serializable {
 
 	public synchronized void deleteStep(double startPrice, double endPrice) {
 		for(Step s: allPriceSteps) {
-			if((s.getStartPrice() == startPrice) && s.getEndPrice() == endPrice) {
+			if((s.getStartPrice() == startPrice) && (s.getEndPrice() == endPrice)) {
 				allPriceSteps.remove(s);
 				break;
 			}
