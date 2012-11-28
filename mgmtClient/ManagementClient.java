@@ -173,7 +173,12 @@ public class ManagementClient {
 						LOG.error("Wrong parameters");
 					} else {
 						loggedIn = false;
-						billingHandler = null;
+						try {
+							UnicastRemoteObject.unexportObject(billingHandler, true);
+						} catch (NoSuchObjectException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						System.out.println("logged out of billing server");
 					}
 				}
@@ -223,7 +228,6 @@ public class ManagementClient {
 			else if(cmd[0].equals("!exit")) {
 				try {
 					UnicastRemoteObject.unexportObject(notify, true);
-					UnicastRemoteObject.unexportObject(billingHandler, true);
 				} catch (NoSuchObjectException e) {
 					e.printStackTrace();
 				}
