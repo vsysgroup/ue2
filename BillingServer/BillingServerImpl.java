@@ -23,17 +23,17 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 
 	@Override
 	public IBillingServerSecure login(String username, String password) throws RemoteException {
-		
+
 		if(!checkAuthentification(username, password)) {
 			return null;
 		}
-		
+
 		//export remote
 		BillingServerSecureImpl billingServerAccess = BillingServerSecureImpl.getInstance(); 
 		UnicastRemoteObject.exportObject(billingServerAccess, 0);
 		return billingServerAccess;
 	}
-	
+
 	private boolean checkAuthentification(String name, String pw) {
 		MessageDigest md = null;
 		try {
@@ -41,13 +41,15 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 		} catch (NoSuchAlgorithmException e) {
 			System.out.println("no such algorithm");
 		}
+
+		byte[] pwHash = md.digest(pw.getBytes()); 
+		String pwHex = byteArrayToHex(pwHash);
 		
-		byte[] pwHash = md.digest(pw.getBytes());
-		Map<String, byte[]> user = UserPropertyReader.getInstance().getPermittedUser();
-		
-		for(Entry <String, byte[]> entry: user.entrySet()) {
+		Map<String, String> user = UserPropertyReader.getInstance().getPermittedUser();
+
+		for(Entry <String, String> entry: user.entrySet()) {
 			if(entry.getKey().equals(name)) {
-				if(entry.getValue().equals(pwHash)) {
+				if(entry.getValue().equals(pwHex)) { 
 					return true;
 				}
 			}
@@ -55,6 +57,13 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 		return false;
 	}
 	
+	private String byteArrayToHex(byte[] digest) {
+		StringBuilder sb = new StringBuilder();
+		for(byte b: digest)
+			sb.append(String.format("%02x", b&0xff));
+		return sb.toString();
+	}
+
 	//create hash for static userpasswords; never used by program
 	@SuppressWarnings("unused")
 	private void getPasswordHash() {

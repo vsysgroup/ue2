@@ -11,7 +11,7 @@ import java.util.Set;
 public class UserPropertyReader {
 	
 	public static UserPropertyReader instance = null;
-	private Map<String, byte[]> permittedUser = new HashMap<String, byte[]>();
+	private Map<String, String> permittedUser = new HashMap<String, String>();
 
 	public static synchronized UserPropertyReader getInstance() {
 		if(instance == null) {
@@ -31,7 +31,7 @@ public class UserPropertyReader {
 				while(it.hasNext()) {
 					String key = it.next();
 					String pw = props.getProperty(key);
-					permittedUser.put(key, pw.getBytes());
+					permittedUser.put(key, pw);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -49,7 +49,7 @@ public class UserPropertyReader {
 		}
 	}
 
-	public Map<String, byte[]> getPermittedUser() {
+	public Map<String, String> getPermittedUser() {
 		return permittedUser;
 	}
 }
