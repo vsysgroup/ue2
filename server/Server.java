@@ -375,7 +375,7 @@ public class Server {
 			if (billingHandler != null) {
 				billingHandler.billAuction(currentAuction.getOwner().getUsername(), currentAuction.getID(), winningBid);
 			} else {
-				LOG.log(Priority.ERROR, "Login to AuctionServer with user " + currentAuction.getOwner().getUsername() + " failed.");
+				LOG.error("Login to AuctionServer with user " + currentAuction.getOwner().getUsername() + " failed.");
 			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block

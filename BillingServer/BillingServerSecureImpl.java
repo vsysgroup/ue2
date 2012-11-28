@@ -2,6 +2,7 @@ package billingServer;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +20,10 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 	private PriceSteps priceSteps = PriceSteps.getInstance();
 	private Map<String, Bill> userBills = new HashMap<String, Bill>();
 
-	public static synchronized BillingServerSecureImpl getInstance() {
+	public static synchronized BillingServerSecureImpl getInstance() throws RemoteException {
 		if(instance == null) {
 			instance = new BillingServerSecureImpl();
+			UnicastRemoteObject.exportObject(instance, 0);
 		}
 		return instance;
 	}
