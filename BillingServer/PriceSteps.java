@@ -37,13 +37,16 @@ public class PriceSteps implements Serializable {
 		allPriceSteps.add(newStep);
 	}
 
-	public synchronized void deleteStep(double startPrice, double endPrice) {
+	public synchronized boolean deleteStep(double startPrice, double endPrice) {
+		boolean stepExists = false;
 		for(Step s: allPriceSteps) {
 			if((s.getStartPrice() == startPrice) && (s.getEndPrice() == endPrice)) {
+				stepExists = true;
 				allPriceSteps.remove(s);
 				break;
 			}
 		}
+		return stepExists;
 	}
 
 	public String toString() {

@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 
 public class BillingServerSecureImpl implements IBillingServerSecure, Serializable {
-	
+
 	/**
 	 * 
 	 */
@@ -18,33 +18,36 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 	public static final Logger LOG = Logger.getLogger(BillingServerSecureImpl.class);
 	private PriceSteps priceSteps = PriceSteps.getInstance();
 	private Map<String, Bill> userBills = new HashMap<String, Bill>();
-	
+
 	public static synchronized BillingServerSecureImpl getInstance() {
 		if(instance == null) {
 			instance = new BillingServerSecureImpl();
 		}
 		return instance;
 	}
-	
+
 	private BillingServerSecureImpl() {
-//		LOG.info("i was called YIHAA");
+		//		LOG.info("i was called YIHAA");
 	}
-	
+
 	public PriceSteps getPriceSteps() throws RemoteException {
 		return priceSteps;
 	}
-	
-	
+
+
 	public void createPriceStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) {
 		priceSteps.createStep(startPrice, endPrice, fixedPrice, variablePricePercent);
 	}
-	
-	
-	public void deletePriceStep(double startPrice, double endPrice) {
-		priceSteps.deleteStep(startPrice, endPrice);
+
+
+	public void deletePriceStep(double startPrice, double endPrice) throws RemoteException {
+		boolean success = priceSteps.deleteStep(startPrice, endPrice);
+		if(!success) {
+			throw new RemoteException("ERROR: Price step [" + startPrice + " " + endPrice + "] does not exist");
+		}
 	}
-	
-	
+
+
 	public void billAuction(String user, long auctionID, double price) {
 		Bill bill = userBills.get(user);
 		if(bill == null) {
@@ -54,11 +57,15 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 		}
 		bill.addBillEntry(auctionID, price);		
 	}
-	
-	
-	public Bill getBill(String user) {
-		Bill bill = userBills.get(user);
-		bill.compute(priceSteps);
-		return bill;
+
+
+	public Bill getBill(String user) throws RemoteException {
+		if(!userBills.containsKey(user)) {
+			throw new RemoteException("ERROR: user does not exist");
+		} else {
+			Bill bill = userBills.get(user);
+			bill.compute(priceSteps);
+			return bill;
+		}
 	}
 }

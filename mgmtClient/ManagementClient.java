@@ -41,6 +41,7 @@ public class ManagementClient {
 	private ArrayList<String> subscriptions = new ArrayList<String>();
 	private ArrayList<String> storedMessages = new ArrayList<String>();
 	private boolean loggedIn = false;
+	private String currUser = null;
 	/**
 	 * @param args
 	 */
@@ -69,38 +70,44 @@ public class ManagementClient {
 			cmd = in.nextLine().split("\\s");
 			if(cmd[0].equals("!login")) {
 				if(loggedIn) {
-					System.out.println("already logged in");
+					System.out.println("ERROR: You are already logged in");
 				} else if(cmd.length != 3) {
-					System.out.println("Expected parameters: username, password");
+					System.out.println("ERROR: Expected parameters: username, password");
 				} else {
 					String username = cmd[1];
 					String pw = cmd[2];
 					try {
 						if(billingHandler == null) {
 							loggedIn = false;
-							System.out.println("wrong username or password");
+							System.out.println("ERROR: wrong username or password");
 							LOG.info("user not authorized");
 						} else {
 							billingHandler = loginHandler.login(username, pw);
 							loggedIn = true;
+							currUser = username;
 							LOG.info("mgmt client logged in");
+							System.out.println(currUser + " successfully logged in");
 						}
 					} catch (RemoteException e) {
-						LOG.error("remote login failed");
+						System.out.println("ERROR: login failed");
+						LOG.error("remote login of " + username + " failed");
+						e.printStackTrace();
 					}
 				}
 			}
 			else if(cmd[0].equals("!steps")) {
 				if(!loggedIn) {
-					System.out.println("You have to log in first");
+					System.out.println("ERROR: You have to log in first");
 				} else if(cmd.length != 1) {
-					System.out.println("expected parameters: none");
+					System.out.println("ERROR: Expected parameters: none");
 				}
 				else {
 					try {
 						System.out.println(billingHandler.getPriceSteps());
 					} catch (RemoteException e) {
+						System.out.println("ERROR: getting price steps failed");
 						LOG.error("couldnt get price steps");
+						e.printStackTrace();
 					}
 					LOG.info("listed price steps");
 				}
@@ -108,83 +115,102 @@ public class ManagementClient {
 			}
 			else if(cmd[0].equals("!addStep")) {
 				if(!loggedIn) {
-					System.out.println("You have to log in first");
+					System.out.println("ERROR: You have to log in first");
 				}
 				else {
 					if(cmd.length != 5) {
-						System.out.println("Expected parameters: startPrice, endPrice, fixedPrice, variablePricePercent");
-						LOG.error("Wrong parameters");
+						System.out.println("ERROR: Expected parameters: startPrice, endPrice, fixedPrice, variablePricePercent");
+						LOG.error("Wrong no of parameters");
 					} else {
 						double startPrice = Double.parseDouble(cmd[1]);
-						double endPrice = Double.parseDouble(cmd[2]);
 						double fixedPrice = Double.parseDouble(cmd[3]);
 						double variablePricePercent = Double.parseDouble(cmd[4]);
 						try {
-							billingHandler.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
+							if(cmd[2].equals("0")) {
+								billingHandler.createPriceStep(startPrice, Double.POSITIVE_INFINITY, fixedPrice, variablePricePercent);
+								System.out.println("[" + startPrice + " INFINITY] successfully added");
+							} else {
+								double endPrice = Double.parseDouble(cmd[2]);
+								billingHandler.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
+								System.out.println("[" + startPrice + " " + endPrice + "] successfully added");
+							} 
 						} catch (RemoteException e) {
+							System.out.println(e.getMessage());
 							LOG.error("create price steps failed");
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 			else if(cmd[0].equals("!removeStep")) {
 				if(!loggedIn) {
-					System.out.println("You have to log in first");
+					System.out.println("ERROR: You have to log in first");
 				} else {
 					if(cmd.length != 3) {
-						System.out.println("Expected parameters: startPrice, endPrice");
+						System.out.println("ERROR: Expected parameters: startPrice, endPrice");
 						LOG.error("Wrong parameters");
 					} else {
+						double startPrice = 0;
+						double endPrice = 0;
 						try {
-							double startPrice = Double.parseDouble(cmd[1]);
-							double endPrice = Double.parseDouble(cmd[2]);
+							startPrice = Double.parseDouble(cmd[1]);
+							endPrice = Double.parseDouble(cmd[2]);
 							billingHandler.deletePriceStep(startPrice, endPrice);
+							System.out.println("Price step  [" + startPrice + " " + endPrice + "] successfully removed");
 						} catch (RemoteException e) {
+							System.out.println(e.getMessage());
 							LOG.error("delete price step failed");
+							e.printStackTrace();
 						} catch (NumberFormatException e) {
 							System.out.println("wrong number format - supposed to be double");
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 			else if(cmd[0].equals("!bill")) {
 				if(!loggedIn) {
-					System.out.println("You have to log in first");
+					System.out.println("ERROR: You are currently not logged in.");
 				} else {
 					if(cmd.length != 2) {
-						System.out.println("Expected parameters: username");
+						System.out.println("ERROR: Expected parameters: username");
 						LOG.error("Wrong parameters");
 					} else {
 						String user = cmd[1];
 						try {
 							System.out.println(billingHandler.getBill(user));
-							//TODO bill.toString ausgeben
 						} catch (RemoteException e) {
+							System.out.println(e.getMessage());
 							LOG.error("getting bill failed");
+							e.printStackTrace();
 						}
 					}
 				}
 			}
 			else if(cmd[0].equals("!logout")) {
 				if(!loggedIn) {
-					System.out.println("You have to log in first");
+					System.out.println("ERROR: You have to log in first");
 				} else {
 					if(cmd.length != 1) {
-						LOG.error("Wrong parameters");
+						System.out.println("ERROR: Expected parameters: none");
+						LOG.error("wrong params");
 					} else {
 						loggedIn = false;
 						try {
 							UnicastRemoteObject.unexportObject(billingHandler, true);
+							billingHandler = null;
 						} catch (NoSuchObjectException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						System.out.println("logged out of billing server");
+						System.out.println(currUser + "successfully logged out");
+						currUser = null;
 					}
 				}
 			}
 			else if(cmd[0].equals("!subscribe")) {
 				if(cmd.length != 2) {
+					System.out.println("ERROR: Expected parameters: filter regex");
 					LOG.error("Wrong parameters");
 				} else {
 					String filterRegex = cmd[1];
@@ -201,6 +227,7 @@ public class ManagementClient {
 			}
 			else if(cmd[0].equals("!unsubscribe")) {
 				if(cmd.length != 2) {
+					System.out.println("ERROR: Expected parameters: subscriptionID");
 					LOG.error("Wrong parameters");
 				} else {
 					String subscriptionID = cmd[1];
@@ -227,6 +254,12 @@ public class ManagementClient {
 			}
 			else if(cmd[0].equals("!exit")) {
 				try {
+					if(billingHandler != null) {
+						UnicastRemoteObject.unexportObject(billingHandler, true);
+						billingHandler = null;
+						loggedIn = false;
+						currUser = null;
+					}
 					UnicastRemoteObject.unexportObject(notify, true);
 				} catch (NoSuchObjectException e) {
 					e.printStackTrace();
