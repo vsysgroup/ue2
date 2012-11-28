@@ -17,7 +17,7 @@ public class PriceSteps implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private static PriceSteps instance = null;
 	private Set<Step> allPriceSteps = Collections.synchronizedSet(new HashSet<Step>());
 
@@ -27,16 +27,44 @@ public class PriceSteps implements Serializable {
 		}
 		return instance;
 	}
-	
-	public Set<Step> getSteps() { return allPriceSteps; }
+
+	public Set<Step> getSteps() { 
+		return allPriceSteps; 
+	}
 
 	private PriceSteps() {}
 
-	public void createStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) {
-		Step newStep = new Step(startPrice, endPrice, fixedPrice, variablePricePercent);
-		allPriceSteps.add(newStep);
+	/**
+	 * creates a new price step
+	 * @param startPrice
+	 * @param endPrice
+	 * @param fixedPrice
+	 * @param variablePricePercent
+	 * @return false if step collides with existing step
+	 */
+	public boolean createStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) {
+		boolean collision = false;
+		for(Step s: allPriceSteps) {
+			if( ( (startPrice < s.getStartPrice()) && (endPrice > s.getStartPrice()) ) || ( (startPrice < s.getEndPrice()) && (endPrice > s.getEndPrice()) ) ) {
+				collision = true;
+				break;
+			}
+		}
+		if(collision) {
+			return false;
+		} else {
+			Step newStep = new Step(startPrice, endPrice, fixedPrice, variablePricePercent);
+			allPriceSteps.add(newStep);
+			return true;
+		}
 	}
 
+	/**
+	 * deletes a price step
+	 * @param startPrice
+	 * @param endPrice
+	 * @return false if step does not exist
+	 */
 	public synchronized boolean deleteStep(double startPrice, double endPrice) {
 		boolean stepExists = false;
 		for(Step s: allPriceSteps) {
