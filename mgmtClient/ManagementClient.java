@@ -13,10 +13,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import registry.RegistryReader;
-
 import analyticsServer.AnalyticsServerInterface;
 import analyticsServer.Notify;
-import billingServer.BillEntry;
 import billingServer.IBillingServer;
 import billingServer.IBillingServerSecure;
 
@@ -70,24 +68,33 @@ public class ManagementClient {
 		while(in.hasNext()) {
 			cmd = in.nextLine().split("\\s");
 			if(cmd[0].equals("!login")) {
-				String username = cmd[1];
-				String pw = cmd[2];
-				try {
-					billingHandler = loginHandler.login(username, pw);
-					if (billingHandler != null) {
-						loggedIn = true;
-						LOG.info("mgmt client logged in");
-					} else {
-						loggedIn = false;
-						LOG.info("wrong username or password");
+				if(loggedIn) {
+					System.out.println("already logged in");
+				} else if(cmd.length != 3) {
+					System.out.println("Expected parameters: username, password");
+				} else {
+					String username = cmd[1];
+					String pw = cmd[2];
+					try {
+						if(billingHandler == null) {
+							loggedIn = false;
+							System.out.println("wrong username or password");
+							LOG.info("user not authorized");
+						} else {
+							billingHandler = loginHandler.login(username, pw);
+							loggedIn = true;
+							LOG.info("mgmt client logged in");
+						}
+					} catch (RemoteException e) {
+						LOG.error("remote login failed");
 					}
-				} catch (RemoteException e) {
-					LOG.error("remote login failed");
 				}
 			}
 			else if(cmd[0].equals("!steps")) {
 				if(!loggedIn) {
 					System.out.println("You have to log in first");
+				} else if(cmd.length != 1) {
+					System.out.println("expected parameters: none");
 				}
 				else {
 					try {
@@ -216,6 +223,7 @@ public class ManagementClient {
 			else if(cmd[0].equals("!exit")) {
 				try {
 					UnicastRemoteObject.unexportObject(notify, true);
+					UnicastRemoteObject.unexportObject(billingHandler, true);
 				} catch (NoSuchObjectException e) {
 					e.printStackTrace();
 				}
