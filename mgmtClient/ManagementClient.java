@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 
 import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
@@ -77,16 +78,19 @@ public class ManagementClient {
 					String username = cmd[1];
 					String pw = cmd[2];
 					try {
-						if(billingHandler == null) {
+						if(loginHandler == null) {
 							loggedIn = false;
-							System.out.println("ERROR: wrong username or password");
-							LOG.info("user not authorized");
+							LOG.error("Billing Server not available");							
 						} else {
 							billingHandler = loginHandler.login(username, pw);
-							loggedIn = true;
-							currUser = username;
-							LOG.info("mgmt client logged in");
-							System.out.println(currUser + " successfully logged in");
+							if (billingHandler == null) {
+								loggedIn = false;
+								LOG.info("user not authorized");
+							} else {
+								loggedIn = true;
+								currUser = username;
+								LOG.info(currUser + "successfully logged in");	
+							}							
 						}
 					} catch (RemoteException e) {
 						System.out.println("ERROR: login failed");
