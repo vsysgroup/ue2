@@ -127,20 +127,23 @@ public class ManagementClient {
 						LOG.error("Wrong no of parameters");
 					} else {
 						double startPrice = Double.parseDouble(cmd[1]);
+						double endPrice = Double.parseDouble(cmd[2]);
 						double fixedPrice = Double.parseDouble(cmd[3]);
 						double variablePricePercent = Double.parseDouble(cmd[4]);
 						try {
-							if(cmd[2].equals("0")) {
-								billingHandler.createPriceStep(startPrice, Double.POSITIVE_INFINITY, fixedPrice, variablePricePercent);
+							billingHandler.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
+							if(endPrice == 0) {
 								System.out.println("[" + startPrice + " INFINITY] successfully added");
 							} else {
-								double endPrice = Double.parseDouble(cmd[2]);
-								billingHandler.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
 								System.out.println("[" + startPrice + " " + endPrice + "] successfully added");
 							} 
 						} catch (RemoteException e) {
 							System.out.println(e.getMessage());
 							LOG.error("create price steps failed");
+							e.printStackTrace();
+						} catch (NumberFormatException e) {
+							System.out.println("ERROR: parameters must be floatingpoint values");
+							LOG.error("wrong number format - supposed to be double");
 							e.printStackTrace();
 						}
 					}
@@ -166,7 +169,8 @@ public class ManagementClient {
 							LOG.error("delete price step failed");
 							e.printStackTrace();
 						} catch (NumberFormatException e) {
-							System.out.println("wrong number format - supposed to be double");
+							System.out.println("ERROR: parameters must be floatingpoint values");
+							LOG.error("wrong number format - supposed to be double");
 							e.printStackTrace();
 						}
 					}
