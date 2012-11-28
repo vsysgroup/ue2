@@ -3,21 +3,8 @@ package client;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.Scanner;
-
-import org.apache.log4j.Logger;
-
-import registry.RegistryReader;
-
-import billingServer.BillingServerImpl;
-import billingServer.IBillingServer;
-
 
 import communication.TCPCommunication;
 
@@ -32,7 +19,7 @@ public class Client {
 	
 	private String serverHost;
 	private int serverTCPPort;
-	private int udpPort;
+//	private int udpPort;
 	private Socket clientSocket = null;
 	private Boolean clientStatus = false;
 	private Boolean loggedIn = false;
@@ -40,7 +27,7 @@ public class Client {
 	private TCPCommunication tcpCommunication = null;
 	private String username = "";
 	private DatagramSocket datagramSocket = null;
-	private ClientUDPListenerThread clientUDPListenerThread = null;
+//	private ClientUDPListenerThread clientUDPListenerThread = null;
 
 	
 	public static void main(String[] args) {
@@ -61,28 +48,29 @@ public class Client {
 	 */
 	private Client(String[] args) throws WrongParameterCountException {
 		//check if parameters are alright
-		if(args.length != 3) {
-			throw new WrongParameterCountException();
-		} else {
+//		if(args.length != 3) {
+//			throw new WrongParameterCountException();
+//		} else {
 			this.serverHost = args[0];
 			this.serverTCPPort = Integer.parseInt(args[1]);
-			this.udpPort = Integer.parseInt(args[2]);
-		}
+//			this.udpPort = Integer.parseInt(args[2]);
+//		}
 		
 		clientStatus = true;
 		
 		System.out.println("Starting Client.");
 		
-		try {
-			datagramSocket = new DatagramSocket(this.udpPort);
-		} catch (SocketException e) {
-			System.out.println("Could not bind to UDP port! The port may be in use." + " Port: " + udpPort);
-			exitClient();
-		}
+		//!!LAB2: NO UDP!!
+//		try {
+//			datagramSocket = new DatagramSocket(this.udpPort);
+//		} catch (SocketException e) {
+//			System.out.println("Could not bind to UDP port! The port may be in use." + " Port: " + udpPort);
+//			exitClient();
+//		}
 		//Start the listener threads
 		//new ClientListenerThread(tcpCommunication, this).start();
-		clientUDPListenerThread = new ClientUDPListenerThread(datagramSocket, this);
-		clientUDPListenerThread.start();
+//		clientUDPListenerThread = new ClientUDPListenerThread(datagramSocket, this);
+//		clientUDPListenerThread.start();
 		
 		
 		
@@ -336,7 +324,8 @@ public class Client {
 			System.out.println("Error while creating BufferedReader or PrintWriter!");
 			exitClient();
 		}
-		communication.send("!login" + " " + username + " " + udpPort);
+		communication.send("!login" + " " + username);
+//		communication.send("!login" + " " + username + " " + udpPort);
 		return communication;
 	}
 	
