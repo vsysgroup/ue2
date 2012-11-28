@@ -1,7 +1,14 @@
 package billingServer;
 
-public class Step {
+import java.io.Serializable;
 
+public class Step implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1546868358861038337L;
+	
 	private double startPrice, endPrice, fixedPrice, variablePricePercent;
 	
 	public Step(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) {

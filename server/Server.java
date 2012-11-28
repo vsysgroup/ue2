@@ -13,21 +13,16 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Scanner;
 
-import mgmtClient.ManagementClient;
-
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-
-import billingServer.BillingServerSecureImpl;
-import billingServer.IBillingServer;
-import billingServer.IBillingServerSecure;
 
 import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
 import analyticsServer.AuctionEvent;
 import analyticsServer.BidEvent;
 import analyticsServer.UserEvent;
-
+import billingServer.IBillingServer;
+import billingServer.IBillingServerSecure;
 import exception.WrongParameterCountException;
 
 /**

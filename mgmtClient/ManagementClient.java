@@ -74,8 +74,13 @@ public class ManagementClient {
 				String pw = cmd[2];
 				try {
 					billingHandler = loginHandler.login(username, pw);
-					loggedIn = true;
-					LOG.info("mgmt client logged in");
+					if (billingHandler != null) {
+						loggedIn = true;
+						LOG.info("mgmt client logged in");
+					} else {
+						loggedIn = false;
+						LOG.info("wrong username or password");
+					}
 				} catch (RemoteException e) {
 					LOG.error("remote login failed");
 				}

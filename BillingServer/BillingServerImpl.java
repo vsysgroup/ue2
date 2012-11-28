@@ -23,9 +23,11 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 
 	@Override
 	public IBillingServerSecure login(String username, String password) throws RemoteException {
+		
 		if(!checkAuthentification(username, password)) {
 			return null;
 		}
+		
 		//export remote
 		BillingServerSecureImpl billingServerAccess = BillingServerSecureImpl.getInstance(); 
 		UnicastRemoteObject.exportObject(billingServerAccess, 0);

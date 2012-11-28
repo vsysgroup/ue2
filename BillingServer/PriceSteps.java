@@ -1,5 +1,6 @@
 package billingServer;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,8 +12,13 @@ import java.util.TreeSet;
  * @author Babz
  *
  */
-public class PriceSteps {
+public class PriceSteps implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private static PriceSteps instance = null;
 	private SortedSet<Step> allPriceSteps = Collections.synchronizedSortedSet(new TreeSet<Step>());
 

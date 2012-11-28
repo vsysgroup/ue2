@@ -1,10 +1,16 @@
 package billingServer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bill {
+public class Bill implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5840430563803196422L;
+	
 	private String user;
 	private List<BillEntry> allBills = new ArrayList<BillEntry>();
 
