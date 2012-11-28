@@ -2,6 +2,7 @@ package billingServer;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
@@ -20,7 +21,7 @@ public class PriceSteps implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private static PriceSteps instance = null;
-	private SortedSet<Step> allPriceSteps = Collections.synchronizedSortedSet(new TreeSet<Step>());
+	private Set<Step> allPriceSteps = Collections.synchronizedSet(new HashSet<Step>());
 
 	public static synchronized PriceSteps getInstance() {
 		if(instance == null) {
