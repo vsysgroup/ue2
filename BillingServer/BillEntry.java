@@ -81,14 +81,12 @@ public class BillEntry implements Serializable {
 	}
 	
 	public String toString() {
-		//DecimalFormat("#.##").format();
-		DecimalFormat customFormat = new DecimalFormat("#.##");
-		
+		DecimalFormat customFormat = new DecimalFormat("#.##");		
 		return 	auctionID + "\t" +
-		customFormat.format(price) + "\t" +
-		customFormat.format(feeFixed) + "\t" +
-		customFormat.format(feeVariable) + "\t" +
-		customFormat.format(feeTotal);
+			customFormat.format(price) + "\t" +
+			customFormat.format(feeFixed) + "\t" +
+			customFormat.format(feeVariable) + "\t" +
+			customFormat.format(feeTotal);
 	}
 
 }
