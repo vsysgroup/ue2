@@ -53,6 +53,8 @@ public class Step implements Serializable {
 	@Override
 	public String toString() {
 		return startPrice + "\t" + endPrice + "\t" + fixedPrice + "\t" + variablePricePercent + "%";
+		
+		
 	}
 	
 }
