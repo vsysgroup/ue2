@@ -45,7 +45,7 @@ public class PriceSteps implements Serializable {
 	public boolean createStep(double startPrice, double endPrice, double fixedPrice, double variablePricePercent) {
 		boolean collision = false;
 		for(Step s: allPriceSteps) {
-			if( ( (startPrice < s.getStartPrice()) && (endPrice > s.getStartPrice()) ) || ( (startPrice < s.getEndPrice()) && (endPrice > s.getEndPrice()) ) ) {
+			if( ( (startPrice <= s.getStartPrice()) && (endPrice > s.getStartPrice()) ) || ( (startPrice < s.getEndPrice()) && (endPrice >= s.getEndPrice()) ) ) {
 				collision = true;
 				break;
 			}
