@@ -41,10 +41,11 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 		} else if((startPrice < 0) || (endPrice < 0) || (fixedPrice < 0) || (variablePricePercent < 0)) {
 			throw new RemoteException("ERROR: One of the parameters is negative");
 		}
-		//TODO throw exception if provided price interval overlaps with existing price step
-		//ERROR: Your price interval collides with existing price step. Please delete the existing one first.
 
-		priceSteps.createStep(startPrice, endPrice, fixedPrice, variablePricePercent);
+		boolean success = priceSteps.createStep(startPrice, endPrice, fixedPrice, variablePricePercent);
+		if(!success) {
+			throw new RemoteException("ERROR: Your price interval collides with existing price step. Please delete the existing one first.");
+		}
 	}
 
 
