@@ -64,13 +64,15 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 		return sb.toString();
 	}
 
-	//create hash for static userpasswords; never used by program
+	//create hash for static user passwords; never used by program
 	@SuppressWarnings("unused")
 	private void getPasswordHash() {
 		String password = "alice123";
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] hash = md.digest(password.getBytes());
+			byte[] pwHash = md.digest(password.getBytes()); 
+			String pwHex = byteArrayToHex(pwHash);
+			System.out.println(pwHex);
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
