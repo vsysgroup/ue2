@@ -1,6 +1,7 @@
 package billingServer;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 public class Step implements Serializable {
 
@@ -52,7 +53,11 @@ public class Step implements Serializable {
 
 	@Override
 	public String toString() {
-		return startPrice + "\t" + endPrice + "\t" + fixedPrice + "\t" + variablePricePercent + "%";
+		DecimalFormat customFormat = new DecimalFormat("#.#");		
+		return 	customFormat.format(startPrice) + "\t" +
+			customFormat.format(endPrice) + "\t" +
+			customFormat.format(fixedPrice) + "\t" +
+			customFormat.format(variablePricePercent) + "%";		
 	}
 	
 }

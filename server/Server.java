@@ -15,6 +15,7 @@ import java.util.Scanner;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 
 import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
@@ -371,7 +372,11 @@ public class Server {
 			analyticsHandler.processEvent(new AuctionEvent("AUCTION_ENDED", (long) currentAuction.getID()));
 			//register new bill for auction owner on billingServer
 			billingHandler = loginHandler.login("auctionClientUser", "dslab2012");
-			billingHandler.billAuction(currentAuction.getOwner().getUsername(), currentAuction.getID(), winningBid);
+			if (billingHandler != null) {
+				billingHandler.billAuction(currentAuction.getOwner().getUsername(), currentAuction.getID(), winningBid);
+			} else {
+				LOG.log(Priority.ERROR, "Login to AuctionServer with user " + currentAuction.getOwner().getUsername() + " failed.");
+			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
