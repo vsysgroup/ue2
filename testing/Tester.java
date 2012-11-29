@@ -37,12 +37,12 @@ public class Tester {
 		//only one mgmt client
 		//eventSubscription on any event type (filter ".*") & auto mode
 		//auto mode
-		ManagementClient admin = new ManagementClient();
+		ManagementClient admin = new ManagementClient("test");
 		admin.subscribeAll();
 		admin.setToAuto();
 		
 		//several clients
-		for(int i = 0; i <= noOfClients; ++i) {
+		for(int i = 0; i < noOfClients; i++) {
 
 			threadpool.execute(new TestComponent(auctionsPerMin, auctionDuration, updateIntervalSec, bidsPerMin));
 		}
