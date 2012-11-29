@@ -16,10 +16,9 @@ public class AuctionBidder implements Runnable {
 	public static final Logger LOG = Logger.getLogger(AuctionBidder.class);
 
 	private int sleepDurationBidding;
-	@SuppressWarnings("unused")
 	private int updateInterval;
 	private Client client;
-	private Auction randomAuction;
+	public Auction randomAuction = null;
 
 	public AuctionBidder(Client client, int updateInterval,
 			int sleepDurationBidding) {
@@ -31,11 +30,12 @@ public class AuctionBidder implements Runnable {
 	@Override
 	public void run() {
 
+		Thread auctionsUpdater  = new Thread(new AuctionListUpdater(this, updateInterval));
+		auctionsUpdater.start();
+
 		while(true) {
 
-			@SuppressWarnings("unused")
-			String currAuctions = Server.currentAuctionList;
-			randomAuction = Server.getRandomAuction();
+			
 			if(randomAuction != null) {
 				int id = randomAuction.getID();
 				double amount = calculateAmount();
