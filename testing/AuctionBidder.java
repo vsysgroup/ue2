@@ -22,6 +22,8 @@ public class AuctionBidder implements Runnable {
 	public void run() {
 		
 		while(true) {
+			
+			@SuppressWarnings("unused")
 			String currAuctions = Server.currentAuctionList;
 			randomAuction = Server.getRandomAuction();
 			client.placeBid(randomAuction.getID(), calculateAmount());
