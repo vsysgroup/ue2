@@ -55,6 +55,17 @@ public class ManagementClient {
 		new ManagementClient();
 	}
 
+	public ManagementClient(String string) {
+
+		lookupRMI();
+
+		notify = new NotificationChecker(this);
+		try {
+			UnicastRemoteObject.exportObject(notify, 0);
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		}
+	}
 	public ManagementClient() {
 		LOG.info("Starting Management Client");
 
