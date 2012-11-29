@@ -9,10 +9,10 @@ public class AuctionListUpdater implements Runnable {
 	public static final Logger LOG = Logger.getLogger(AuctionListUpdater.class);
 	
 	private int updateInterval;
-	private AuctionBidder auctionBidder;
+	private TestComponent testComponent;
 
-	public AuctionListUpdater(AuctionBidder auctionBidder, int updateInterval) {
-		this.auctionBidder = auctionBidder;
+	public AuctionListUpdater(TestComponent testComponent, int updateInterval) {
+		this.testComponent = testComponent;
 		this.updateInterval = updateInterval;
 	}
 
@@ -20,7 +20,7 @@ public class AuctionListUpdater implements Runnable {
 	public void run() {
 
 		while (true) {
-			auctionBidder.randomAuction = Server.getRandomAuction();
+			testComponent.randomAuction = Server.getRandomAuction();
 			LOG.info("list update");
 			try {
 				Thread.sleep(updateInterval*1000);

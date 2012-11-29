@@ -2,6 +2,9 @@ package testing;
 
 import org.apache.log4j.Logger;
 
+import server.Auction;
+import server.Server;
+
 import client.Client;
 import exception.WrongParameterCountException;
 
@@ -18,6 +21,7 @@ public class TestComponent implements Runnable {
 	private int auctionDuration;
 	private int updateInterval;
 	private int bidsPerMin;
+	public Auction randomAuction = Server.getRandomAuction();
 	
 	public TestComponent(int auctionsPerMin, int auctionDuration,
 			int updateIntervalSec, int bidsPerMin) {
@@ -56,10 +60,11 @@ public class TestComponent implements Runnable {
 		}
 		
 		Thread create = new Thread(new AuctionCreator(client, auctionDuration, sleepDurationCreation));
-		Thread bid = new Thread(new AuctionBidder(client, updateInterval, sleepDurationBidding));
+		Thread bid = new Thread(new AuctionBidder(client, sleepDurationBidding, randomAuction));
+		Thread auctionsUpdater  = new Thread(new AuctionListUpdater(this, updateInterval));
 		create.start();
 		bid.start();
-		
+		auctionsUpdater.start();
 	}
 
 	

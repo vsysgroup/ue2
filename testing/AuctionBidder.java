@@ -3,7 +3,6 @@ package testing;
 import org.apache.log4j.Logger;
 
 import server.Auction;
-import server.Server;
 import client.Client;
 
 /**
@@ -16,25 +15,19 @@ public class AuctionBidder implements Runnable {
 	public static final Logger LOG = Logger.getLogger(AuctionBidder.class);
 
 	private int sleepDurationBidding;
-	private int updateInterval;
 	private Client client;
-	public Auction randomAuction = null;
+	private Auction randomAuction;
 
-	public AuctionBidder(Client client, int updateInterval,
-			int sleepDurationBidding) {
+	public AuctionBidder(Client client, int sleepDurationBidding, Auction randomAuction) {
 		this.client = client;
-		this.updateInterval = updateInterval;
 		this.sleepDurationBidding = sleepDurationBidding;
+		this.randomAuction = randomAuction;
 	}
 
 	@Override
 	public void run() {
 
-		Thread auctionsUpdater  = new Thread(new AuctionListUpdater(this, updateInterval));
-		auctionsUpdater.start();
-
 		while(true) {
-
 			
 			if(randomAuction != null) {
 				int id = randomAuction.getID();
