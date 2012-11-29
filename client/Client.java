@@ -40,8 +40,17 @@ public class Client implements Runnable {
 		boolean testingOn = false;
 
 		if(testingOn) {
+			LoadtestReader testParameters = new LoadtestReader();
+			int noOfClients = testParameters.getNoOfClients();
+			int auctionsPerMin = testParameters.getAuctionsPerMin();
+			int auctionDuration = testParameters.getAuctionDuration();
+			int updateIntervalSec = testParameters.getUpdateIntervalSec();
+			int bidsPerMin = testParameters.getBidsPerMin();
 			try {
-				threadpool.execute(new Client(args));
+				for(int i = 0; i <= noOfClients; ++i) {
+					
+					threadpool.execute(new Client(args));
+				}
 			} catch (WrongParameterCountException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
