@@ -1,5 +1,6 @@
 package testing;
 
+import server.Server;
 import client.Client;
 
 public class AuctionBidder implements Runnable {
@@ -19,6 +20,8 @@ public class AuctionBidder implements Runnable {
 	public void run() {
 		
 		while(true) {
+			String currAuctions = Server.currentAuctionList;
+//			Auction randomActiveAuction = Server
 //			client.placeBid(ID, amount);
 
 			try {
