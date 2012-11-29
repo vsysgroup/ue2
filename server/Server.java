@@ -15,7 +15,6 @@ import java.util.Scanner;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
@@ -29,6 +28,7 @@ import exception.WrongParameterCountException;
 /**
  * Represents a Server
  * @author Philipp Pfeiffer 0809357
+ * @author Barbara Schwankl 0852176
  *
  */
 public class Server {

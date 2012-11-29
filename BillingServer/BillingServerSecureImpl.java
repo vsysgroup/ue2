@@ -8,7 +8,11 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-
+/**
+ * contains implementation of methods accessible by an admin (mgmt client)
+ * @author Barbara Schwankl 0852176
+ *
+ */
 public class BillingServerSecureImpl implements IBillingServerSecure, Serializable {
 
 	/**

@@ -8,6 +8,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ * reads the hashes of all admin users (mgmt client)
+ * @author Barbara Schwankl 0852176
+ *
+ */
 public class UserPropertyReader {
 	
 	public static UserPropertyReader instance = null;

@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * represents configuration of price steps
- * @author Babz
+ * @author Barbara Schwankl 0852176
  *
  */
 public class PriceSteps implements Serializable {

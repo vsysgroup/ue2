@@ -2,7 +2,6 @@ package billingServer;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -11,7 +10,7 @@ import java.util.Map.Entry;
 
 /**
  * Implementation of Interface Billing Server
- * @author Babz
+ * @author Barbara Schwankl 0852176
  *
  */
 public class BillingServerImpl implements IBillingServer, Serializable {

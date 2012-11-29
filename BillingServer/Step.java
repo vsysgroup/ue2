@@ -3,6 +3,11 @@ package billingServer;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 
+/**
+ * represents a single price step
+ * @author Barbara Schwankl 0852176
+ *
+ */
 public class Step implements Serializable {
 
 	/**
