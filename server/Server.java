@@ -11,10 +11,14 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -25,6 +29,7 @@ import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
 import analyticsServer.AuctionEvent;
 import analyticsServer.BidEvent;
+import analyticsServer.Subscription;
 import analyticsServer.UserEvent;
 import billingServer.IBillingServer;
 import billingServer.IBillingServerSecure;
@@ -52,7 +57,7 @@ public class Server {
 	private AuctionCheckThread auctionCheckThread = null;
 	private ServerSocket serverSocket = null;
 	private ArrayList<User> users = new ArrayList<User>();
-	private static ArrayList<Auction> auctions = new ArrayList<Auction>();
+	private static List<Auction> auctions = Collections.synchronizedList(new ArrayList());
 	private Scanner in = new Scanner(System.in);
 
 	private static AnalyticsServerInterface analyticsHandler = null;
@@ -382,7 +387,7 @@ public class Server {
 	 * returns all currently running auctions
 	 * @return
 	 */
-	public ArrayList<Auction> getAuctions() {
+	public List<Auction> getAuctions() {
 		return auctions;
 	}
 
@@ -452,7 +457,7 @@ public class Server {
 		if(auctions.size() == 0) {
 			return "no auctions are running";
 		}
-		ArrayList<Auction> auctions = getAuctions();
+		List<Auction> auctions = getAuctions();
 		for(int i = 0; i < auctions.size(); i++) {
 			int ID = auctions.get(i).getID();
 			String description = auctions.get(i).getDescription();
@@ -548,7 +553,7 @@ public class Server {
 		if(auctions.size() == 0) {
 			return "no auctions are running";
 		}
-		ArrayList<Auction> tmpAuctions = auctions;
+		List<Auction> tmpAuctions = auctions;
 		for(int i = 0; i < tmpAuctions.size(); i++) {
 			int ID = tmpAuctions.get(i).getID();
 			String description = tmpAuctions.get(i).getDescription();

@@ -2,6 +2,7 @@ package server;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * This thread checks the auctions for their expiration date every 1s and ends any auction that is past it's expiration date.
@@ -18,7 +19,7 @@ public class AuctionCheckThread extends Thread {
 	
 	public void run() {
 		while(!interrupted() && server.getServerStatus()) {
-			ArrayList<Auction> auctions = server.getAuctions();
+			List<Auction> auctions = server.getAuctions();
 			Date date = new Date();
 			for(int i = 0; i < auctions.size(); i++) {
 				Auction currentAuction = auctions.get(i);
