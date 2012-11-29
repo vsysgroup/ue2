@@ -51,8 +51,12 @@ public class Client {
 //		if(args.length != 2) {
 //			throw new WrongParameterCountException();
 //		} else {
+		Boolean test = false;
 			this.serverHost = args[0];
 			this.serverTCPPort = Integer.parseInt(args[1]);
+			if(args.length >= 4) {
+				test = true;
+			}
 //			this.udpPort = Integer.parseInt(args[2]);
 //		}
 
@@ -78,7 +82,7 @@ public class Client {
 
 
 		//loop checking for input
-		while(clientStatus) {
+		while(clientStatus && !test) {
 			try {
 				while(!loggedIn && in.hasNext() && clientStatus) {
 					if(loggedIn) {
