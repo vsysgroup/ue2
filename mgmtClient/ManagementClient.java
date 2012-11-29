@@ -54,7 +54,7 @@ public class ManagementClient {
 		new ManagementClient();
 	}
 
-	private ManagementClient() {
+	public ManagementClient() {
 		LOG.info("Starting Management Client");
 
 		lookupRMI();

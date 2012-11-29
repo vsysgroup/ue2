@@ -38,7 +38,7 @@ public class AuctionBidder implements Runnable {
 
 	private double calculateAmount() {
 		long currTime = System.currentTimeMillis();
-		long auctionBeginTime = 0;
+		long auctionBeginTime = randomAuction.getCreationTime();
 		return 10 + (currTime - auctionBeginTime);
 	}
 

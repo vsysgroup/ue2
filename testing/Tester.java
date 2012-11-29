@@ -3,6 +3,8 @@ package testing;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import mgmtClient.ManagementClient;
+
 
 /**
  * creates a new thread for each testing client
@@ -31,7 +33,7 @@ public class Tester {
 		//one mgmt client
 		//eventSubscription on any event type (filter ".*")
 		//auto mode
-//		threadpool.execute(new TestComponent());
+		ManagementClient admin = new ManagementClient();
 		
 		//several clients
 		for(int i = 0; i <= noOfClients; ++i) {
