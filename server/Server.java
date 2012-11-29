@@ -571,7 +571,7 @@ public class Server {
 	}
 	
 	public static Auction getRandomAuction() {
-		if(auctions.size() <= 0) {
+		if(auctions.size() == 0) {
 			return null;
 		}
 		int amount = auctions.size() - 1;
