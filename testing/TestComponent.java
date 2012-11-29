@@ -60,11 +60,15 @@ public class TestComponent implements Runnable {
 		}
 		
 		Thread create = new Thread(new AuctionCreator(client, auctionDuration, sleepDurationCreation));
-		Thread bid = new Thread(new AuctionBidder(client, sleepDurationBidding, randomAuction));
+		Thread bid = new Thread(new AuctionBidder(client, this, sleepDurationBidding));
 		Thread auctionsUpdater  = new Thread(new AuctionListUpdater(this, updateInterval));
 		create.start();
 		bid.start();
 		auctionsUpdater.start();
+	}
+	
+	public Auction getUpdatedRandomAuction() {
+		return randomAuction;
 	}
 
 	

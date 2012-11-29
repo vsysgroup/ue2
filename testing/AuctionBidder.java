@@ -17,11 +17,12 @@ public class AuctionBidder implements Runnable {
 	private int sleepDurationBidding;
 	private Client client;
 	private Auction randomAuction;
+	private TestComponent testComponent;
 
-	public AuctionBidder(Client client, int sleepDurationBidding, Auction randomAuction) {
+	public AuctionBidder(Client client, TestComponent testComponent, int sleepDurationBidding) {
 		this.client = client;
+		this.testComponent = testComponent;
 		this.sleepDurationBidding = sleepDurationBidding;
-		this.randomAuction = randomAuction;
 	}
 
 	@Override
@@ -29,6 +30,7 @@ public class AuctionBidder implements Runnable {
 
 		while(true) {
 			
+			randomAuction = testComponent.getUpdatedRandomAuction();
 			if(randomAuction != null) {
 				int id = randomAuction.getID();
 				double amount = calculateAmount();
@@ -38,6 +40,7 @@ public class AuctionBidder implements Runnable {
 
 			try {
 				Thread.sleep(sleepDurationBidding);
+				LOG.info("bidder sleeps");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
