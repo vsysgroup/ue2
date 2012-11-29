@@ -3,7 +3,6 @@ package client;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
@@ -14,7 +13,6 @@ import exception.WrongParameterCountException;
 /**
  * Represents a Client
  * @author Philipp Pfeiffer 0809357
- * @author Barbara Schwankl 0852176
  * 
  */
 public class Client {
