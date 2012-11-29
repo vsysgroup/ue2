@@ -27,7 +27,11 @@ public class LoadtestReader {
 			}
 			noOfClients = Integer.parseInt(registryProperties.getProperty("clients"));
 			auctionsPerMin = Integer.parseInt(registryProperties.getProperty("auctionsPerMin"));
-			auctionDuration = Integer.parseInt(registryProperties.getProperty("auctionDuration"));
+			
+			String auctionDurationUnformatted = registryProperties.getProperty("auctionDuration");
+			String[] tmp = auctionDurationUnformatted.split("\\*");
+			auctionDuration = Integer.parseInt(tmp[0]) * Integer.parseInt(tmp[1]);
+			
 			updateIntervalSec = Integer.parseInt(registryProperties.getProperty("updateIntervalSec"));
 			bidsPerMin = Integer.parseInt(registryProperties.getProperty("bidsPerMin"));
 			

@@ -3,6 +3,8 @@ package testing;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.BasicConfigurator;
+
 import mgmtClient.ManagementClient;
 
 
@@ -17,6 +19,8 @@ public class Tester {
 
 	public static void main(String[] args) {
 
+		BasicConfigurator.configure();
+		
 		LoadtestReader testParameters = new LoadtestReader();
 		
 		//number of concurrent bidding client
