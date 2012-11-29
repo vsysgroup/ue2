@@ -16,6 +16,7 @@ import exception.WrongParameterCountException;
 public class TestComponent implements Runnable {
 
 	public static final Logger LOG = Logger.getLogger(TestComponent.class);
+	private static int loginNo = 0;
 	
 	private int auctionsPerMin;
 	private int auctionDuration;
@@ -39,6 +40,7 @@ public class TestComponent implements Runnable {
 		Client client = null;
 		try {
 			client = new Client(args);
+			client.login("tester" + ++loginNo);
 			LOG.info("new test client created");
 		} catch (WrongParameterCountException e) {
 			System.out.println("ERROR: expected no of params: 2");

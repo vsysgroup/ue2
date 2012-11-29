@@ -177,7 +177,7 @@ public class Client {
 		
 	}
 
-	private void login(String username) {
+	public void login(String username) {
 		tcpCommunication.send("!login" + " " + username);
 //		tcpCommunication.send("!login" + " " + username + " " + udpPort);
 		
