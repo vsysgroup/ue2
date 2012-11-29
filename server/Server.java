@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -35,9 +37,13 @@ import exception.WrongParameterCountException;
  */
 public class Server {
 	
+	
+	
 	public static final Logger LOG = Logger.getLogger(Server.class);
 	private static String bindingNameAnalytics = "AnalyticsServer";
 	private static String bindingNameBilling = "BillingServer";
+	
+	public static String currentAuctionList = "";
 
 	private int tcpPort;
 	private boolean serverStatus = false;
@@ -45,7 +51,7 @@ public class Server {
 	private AuctionCheckThread auctionCheckThread = null;
 	private ServerSocket serverSocket = null;
 	private ArrayList<User> users = new ArrayList<User>();
-	private ArrayList<Auction> auctions = new ArrayList<Auction>();
+	private static ArrayList<Auction> auctions = new ArrayList<Auction>();
 	private Scanner in = new Scanner(System.in);
 
 	private static AnalyticsServerInterface analyticsHandler = null;
@@ -531,5 +537,29 @@ public class Server {
 		} catch (RemoteException e) {
 			LOG.info("problem occurred trying to get registry");
 		}
+	}
+	public static String getList() {
+		String list = "";
+
+		ArrayList<Auction> tmpAuctions = auctions;
+		for(int i = 0; i < tmpAuctions.size(); i++) {
+			int ID = tmpAuctions.get(i).getID();
+			String description = tmpAuctions.get(i).getDescription();
+			description.trim();
+			String owner = tmpAuctions.get(i).getOwner().getUsername();
+			double highestBid = tmpAuctions.get(i).getWinningBid();
+			User highestBidder = tmpAuctions.get(i).getWinner();
+			String highestBidderName = "";
+			String endDate = tmpAuctions.get(i).dateToString();
+
+			if(highestBidder == null) {
+				highestBidderName = "none";
+			} else {
+				highestBidderName = highestBidder.getUsername();
+			}
+			list += ID + ". " + "'" + description + "'" + " " + owner + " " + endDate + " " + highestBid + " " + highestBidderName;
+			list += "\n";
+		}
+		return list;
 	}
 }
