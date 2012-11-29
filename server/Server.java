@@ -13,6 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Scanner;
 
 import org.apache.log4j.BasicConfigurator;
@@ -538,6 +539,7 @@ public class Server {
 			LOG.info("problem occurred trying to get registry");
 		}
 	}
+	
 	public static String getList() {
 		String list = "";
 
@@ -561,5 +563,13 @@ public class Server {
 			list += "\n";
 		}
 		return list;
+	}
+	
+	public static Auction getRandomAuction() {
+		int amount = auctions.size() - 1;
+		Random randomGenerator = new Random();
+		int randomNumber = randomGenerator.nextInt(amount);
+		Auction randomAuction = auctions.get(randomNumber);
+		return randomAuction;
 	}
 }
