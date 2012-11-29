@@ -1,7 +1,5 @@
 package testing;
 
-import mgmtClient.ManagementClient;
-
 import org.apache.log4j.Logger;
 
 import client.Client;
@@ -33,7 +31,7 @@ public class TestComponent implements Runnable {
 	public void run() {
 
 		//auction creation
-		String[] args = {"localhost", "13460" };
+		String[] args = {"localhost", "13460", "udpFake", "test"};
 		Client client = null;
 		try {
 			client = new Client(args);
