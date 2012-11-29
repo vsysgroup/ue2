@@ -51,6 +51,9 @@ public class BillingServerSecureImpl implements IBillingServerSecure, Serializab
 
 
 	public void deletePriceStep(double startPrice, double endPrice) throws RemoteException {
+		if(endPrice == 0) {
+			endPrice = Double.POSITIVE_INFINITY;
+		}
 		boolean success = priceSteps.deleteStep(startPrice, endPrice);
 		if(!success) {
 			throw new RemoteException("ERROR: Price step [" + startPrice + " " + endPrice + "] does not exist");

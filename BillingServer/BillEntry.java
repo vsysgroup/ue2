@@ -70,22 +70,28 @@ public class BillEntry implements Serializable {
 	}
 
 	public void compute(PriceSteps priceSteps) {
+		boolean found = false;
 		for (Step step : priceSteps.getSteps()) {
 			if (price >= step.getStartPrice() && price < step.getEndPrice()) {
 				feeFixed = step.getFixedPrice();
 				feeVariable = price * step.getVariablePricePercent() / 100.0;
 				feeTotal = feeFixed + feeVariable;
+				found = true;
+				break;
 			}
+		}
+		if (!found) {
+			feeFixed = feeVariable = feeTotal = 0.0;
 		}
 		
 	}
 	
 	public String toString() {
 		DecimalFormat customFormat = new DecimalFormat("#.##");		
-		return 	auctionID + "\t" +
-			customFormat.format(price) + "\t" +
-			customFormat.format(feeFixed) + "\t" +
-			customFormat.format(feeVariable) + "\t" +
+		return 	auctionID + "\t" + "\t" +
+			customFormat.format(price) + "\t" + "\t" +
+			customFormat.format(feeFixed) + "\t" + "\t" +
+			customFormat.format(feeVariable) + "\t" + "\t" +
 			customFormat.format(feeTotal);
 	}
 
