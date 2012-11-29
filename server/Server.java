@@ -449,7 +449,9 @@ public class Server {
 	 */
 	public String buildList() {
 		String list = "";
-
+		if(auctions.size() == 0) {
+			return "no auctions are running";
+		}
 		ArrayList<Auction> auctions = getAuctions();
 		for(int i = 0; i < auctions.size(); i++) {
 			int ID = auctions.get(i).getID();
@@ -543,6 +545,9 @@ public class Server {
 	public static String getList() {
 		String list = "";
 
+		if(auctions.size() == 0) {
+			return "no auctions are running";
+		}
 		ArrayList<Auction> tmpAuctions = auctions;
 		for(int i = 0; i < tmpAuctions.size(); i++) {
 			int ID = tmpAuctions.get(i).getID();
