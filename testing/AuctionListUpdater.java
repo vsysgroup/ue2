@@ -14,12 +14,15 @@ public class AuctionListUpdater implements Runnable {
 
 	@Override
 	public void run() {
-		auctionBidder.randomAuction = Server.getRandomAuction();
-		try {
-			Thread.sleep(updateInterval*1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		while (true) {
+			auctionBidder.randomAuction = Server.getRandomAuction();
+			try {
+				Thread.sleep(updateInterval*1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

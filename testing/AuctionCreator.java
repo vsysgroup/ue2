@@ -12,7 +12,7 @@ import client.Client;
 public class AuctionCreator implements Runnable {
 
 	public static final Logger LOG = Logger.getLogger(AuctionCreator.class);
-	private int auctionNo = 0;
+	private static int auctionNo = 0;
 	
 	private int sleepDurationCreation;
 	private int auctionDuration;
@@ -41,7 +41,7 @@ public class AuctionCreator implements Runnable {
 		}
 	}
 	
-	private synchronized int getAuctionNo() {
+	private static synchronized int getAuctionNo() {
 		return ++auctionNo;
 	}
 }
