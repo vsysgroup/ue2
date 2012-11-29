@@ -16,6 +16,8 @@ import java.util.Scanner;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+import communication.TCPCommunication;
+
 import registry.RegistryReader;
 import analyticsServer.AnalyticsServerInterface;
 import analyticsServer.AuctionEvent;
@@ -113,6 +115,12 @@ public class Server {
 		InetAddress inetAddress = socket.getInetAddress();
 
 		String[] input = message.split(" ");
+		TCPCommunication responseTCPCommunication = null;
+		try {
+			 responseTCPCommunication = new TCPCommunication(socket);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 		/**
 		 * logs the user in
@@ -128,18 +136,22 @@ public class Server {
 				User newUser = new User(username, inetAddress, port);
 				users.add(newUser);
 				newUser.logIn();
-				try {
-					analyticsHandler.processEvent(new UserEvent("USER_LOGIN", newUser.getUsername()));
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+
+				if(analyticsHandler != null) {
+					try {
+						analyticsHandler.processEvent(new UserEvent("USER_LOGIN", newUser.getUsername()));
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
 				}
-				new UDPNotificationThread(inetAddress, port, "login successful" + " " + username).start();
+//				new UDPNotificationThread(inetAddress, port, "login successful" + " " + username).start();
+				responseTCPCommunication.send("login successful" + " " + username);
 			}
 			else{
 				User user = findUser(username);
 				if(user.loggedIn()) {
-					new UDPNotificationThread(inetAddress, port, "login failed").start();
+//					new UDPNotificationThread(inetAddress, port, "login failed").start();
+					responseTCPCommunication.send("login failed");
 				}
 				else{
 					user.logIn();
@@ -149,16 +161,21 @@ public class Server {
 					if(!user.getInetAddress().equals(inetAddress)) {
 						user.setInetAddress(inetAddress);
 					}
-					try {
-						analyticsHandler.processEvent(new UserEvent("USER_LOGIN", user.getUsername()));
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					
+					if(analyticsHandler != null) {
+						try {
+							analyticsHandler.processEvent(new UserEvent("USER_LOGIN", user.getUsername()));
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
 					}
-					new UDPNotificationThread(inetAddress, port, "login successful" + " " + username).start();
+					
+//					new UDPNotificationThread(inetAddress, port, "login successful" + " " + username).start();
+					responseTCPCommunication.send("login successful" + " " + username);
 					if(user.getSavedMessages().size() > 0) {
 						for(int i = 0; i < user.getSavedMessages().size(); i++) {
-							new UDPNotificationThread(inetAddress, port, user.getSavedMessages().get(i)).start();
+//							new UDPNotificationThread(inetAddress, port, user.getSavedMessages().get(i)).start();
+							responseTCPCommunication.send(user.getSavedMessages().get(i));
 						}
 						user.clearMessages();
 					}
@@ -177,13 +194,16 @@ public class Server {
 			int port = user.getPort();
 			if(user.loggedIn()) {
 				user.logOut();
-				try {
-					analyticsHandler.processEvent(new UserEvent("USER_LOGOUT", user.getUsername()));
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(analyticsHandler != null) {
+					try {
+						analyticsHandler.processEvent(new UserEvent("USER_LOGOUT", user.getUsername()));
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
 				}
-				new UDPNotificationThread(inetAddress, port, "logout successful" + " " + username).start();
+				
+//				new UDPNotificationThread(inetAddress, port, "logout successful" + " " + username).start();
+				responseTCPCommunication.send("logout successful" + " " + username);
 			}
 		}
 
@@ -206,14 +226,17 @@ public class Server {
 			String endDate = newAuction.dateToString();
 			int ID = newAuction.getID();
 			
-			try {
-				analyticsHandler.processEvent(new AuctionEvent("AUCTION_STARTED", (long) ID));
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(analyticsHandler != null) {
+				try {
+					analyticsHandler.processEvent(new AuctionEvent("AUCTION_STARTED", (long) ID));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 			
-			new UDPNotificationThread(inetAddress, port, "create successful" + " " + ID + " " + endDate + " " + description).start();
+			
+//			new UDPNotificationThread(inetAddress, port, "create successful" + " " + ID + " " + endDate + " " + description).start();
+			responseTCPCommunication.send("create successful" + " " + ID + " " + endDate + " " + description);
 		}
 
 		/**
@@ -222,15 +245,11 @@ public class Server {
 		 * list <list>
 		 */
 		if(input[0].equals("!list")) {
-			String username = input[1];
-			User user = findUser(username);
-			int port = user.getPort();
-
-			InetAddress returnAddress = user.getInetAddress();
 
 			String list = buildList();
-
-			new UDPNotificationThread(returnAddress, port, "list" + " " + list).start();
+//			new UDPNotificationThread(returnAddress, port, "list" + " " + list).start();
+			responseTCPCommunication.send("list " + list);
+			
 		}
 
 		/**
@@ -239,7 +258,7 @@ public class Server {
 		if(input[0].equals("!bid")) {
 			String username = input[1];
 			User user = findUser(username);
-			findAuctionByID(input[2]).newBid(user, Double.parseDouble(input[3]));
+			findAuctionByID(input[2]).newBid(user, Double.parseDouble(input[3]), responseTCPCommunication);
 		}
 	}
 
@@ -328,10 +347,11 @@ public class Server {
 	 * @param amountHighestBid
 	 * @param description
 	 */
-	public void bidUnsuccessful(User bidder, double amountBid, double amountHighestBid, String description) {
+	public void bidUnsuccessful(User bidder, double amountBid, double amountHighestBid, String description, TCPCommunication responseTCPCommunication) {
 		InetAddress inetAddress = bidder.getInetAddress();
 		int port = bidder.getPort();
-		new UDPNotificationThread(inetAddress, port, "bid" + " " + "unsuccessful" + " " + amountBid + " " + amountHighestBid + " " + description).start();
+//		new UDPNotificationThread(inetAddress, port, "bid" + " " + "unsuccessful" + " " + amountBid + " " + amountHighestBid + " " + description).start();
+		responseTCPCommunication.send("bid" + " " + "unsuccessful" + " " + amountBid + " " + amountHighestBid + " " + description);
 	}
 
 	/**
@@ -369,23 +389,28 @@ public class Server {
 		String description = currentAuction.getDescription();
 		
 		try {
-			analyticsHandler.processEvent(new AuctionEvent("AUCTION_ENDED", (long) currentAuction.getID()));
-			//register new bill for auction owner on billingServer
-			billingHandler = loginHandler.login("auctionClientUser", "dslab2012");
-			if (billingHandler != null) {
-				billingHandler.billAuction(currentAuction.getOwner().getUsername(), currentAuction.getID(), winningBid);
-			} else {
-				LOG.error("Login to AuctionServer with user " + currentAuction.getOwner().getUsername() + " failed.");
+			if(analyticsHandler != null) {
+				analyticsHandler.processEvent(new AuctionEvent("AUCTION_ENDED", (long) currentAuction.getID()));
 			}
+			//register new bill for auction owner on billingServer
+			if(loginHandler != null) {
+				billingHandler = loginHandler.login("auctionClientUser", "dslab2012");
+				if (billingHandler != null) {
+					billingHandler.billAuction(currentAuction.getOwner().getUsername(), currentAuction.getID(), winningBid);
+				} else {
+					LOG.error("Login to AuctionServer with user " + currentAuction.getOwner().getUsername() + " failed.");
+				}
+			}
+			
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if(winner != null) {
 			try {
-				analyticsHandler.processEvent(new BidEvent("BID_WON", winner.getUsername(), (long) currentAuction.getID(), winningBid));
+				if(analyticsHandler != null) {
+					analyticsHandler.processEvent(new BidEvent("BID_WON", winner.getUsername(), (long) currentAuction.getID(), winningBid));
+				}
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -401,10 +426,10 @@ public class Server {
 			}
 			else {
 				if(bidders.get(i).getUsername().equals(winner.getUsername())) {
-					new UDPNotificationThread(winner.getInetAddress(), winner.getPort(), "!auction-ended" + " " + "You"  + " " + winningBid  + " " + description).start();
+//					new UDPNotificationThread(winner.getInetAddress(), winner.getPort(), "!auction-ended" + " " + "You"  + " " + winningBid  + " " + description).start();
 				}
 				else {
-					new UDPNotificationThread(bidders.get(i).getInetAddress(), bidders.get(i).getPort(), "!auction-ended"  + " " + winner.getUsername()  + " " + winningBid + " " + description).start();
+//					new UDPNotificationThread(bidders.get(i).getInetAddress(), bidders.get(i).getPort(), "!auction-ended"  + " " + winner.getUsername()  + " " + winningBid + " " + description).start();
 				}
 			}
 		}
@@ -434,7 +459,7 @@ public class Server {
 				highestBidderName = highestBidder.getUsername();
 			}
 			list += ID + ". " + "'" + description + "'" + " " + owner + " " + endDate + " " + highestBid + " " + highestBidderName;
-			list += "\n";
+			list += " ";
 		}
 		return list;
 	}
@@ -445,16 +470,19 @@ public class Server {
 	 * @param amount
 	 * @param description
 	 */
-	public void bidSuccessful(User bidder, double amount, String description, int auctionID) {
+	public void bidSuccessful(User bidder, double amount, String description, int auctionID, TCPCommunication tcpCommunication) {
 		InetAddress inetAddress = bidder.getInetAddress();
 		int port = bidder.getPort();
-		try {
-			analyticsHandler.processEvent(new BidEvent("BID_PLACED",bidder.getUsername(), (long) auctionID, amount));
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(analyticsHandler != null) {
+			try {
+				analyticsHandler.processEvent(new BidEvent("BID_PLACED",bidder.getUsername(), (long) auctionID, amount));
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
-		new UDPNotificationThread(inetAddress, port, "bid" + " " + "successful" + " " + amount + " "  + description).start();
+		
+//		new UDPNotificationThread(inetAddress, port, "bid" + " " + "successful" + " " + amount + " "  + description).start();
+		tcpCommunication.send("bid" + " " + "successful" + " " + amount + " "  + description);
 	}
 
 	/**
@@ -462,20 +490,24 @@ public class Server {
 	 * @param bidder
 	 * @param description
 	 */
-	public void userOverbid(User bidder, double amount, String description, int auctionID) {
+	public void userOverbid(User bidder, double amount, String description, int auctionID, TCPCommunication tcpCommunication) {
 		InetAddress inetAddress = bidder.getInetAddress();
 		int port = bidder.getPort();
-		try {
-			analyticsHandler.processEvent(new BidEvent("BID_OVERBID",bidder.getUsername(), (long) auctionID, amount));
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(analyticsHandler != null) {
+			try {
+				analyticsHandler.processEvent(new BidEvent("BID_OVERBID",bidder.getUsername(), (long) auctionID, amount));
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
+		
 		if(!bidder.loggedIn()) {
 			bidder.addMessage("!new-bid" + description);
 		}
 		else {
-			new UDPNotificationThread(inetAddress, port, "!new-bid" + " " + description).start();
+//			new UDPNotificationThread(inetAddress, port, "!new-bid" + " " + description).start();
+			tcpCommunication.send("bid" + " " + "successful" + " " + amount + " "  + description);
+
 		}
 	}
 	
@@ -485,10 +517,15 @@ public class Server {
 			Registry registry = LocateRegistry.getRegistry(registryLocation.getHost(), registryLocation.getPort());
 			try {
 				analyticsHandler = (AnalyticsServerInterface) registry.lookup(bindingNameAnalytics);
-				loginHandler = (IBillingServer) registry.lookup(bindingNameBilling);
 				LOG.info("AnalyticsServer looked up");
 			} catch (NotBoundException e) {
 				LOG.info("this remote object doesnt exist / hasnt been bound - AnalyticsServer");
+			}
+			try {
+				loginHandler = (IBillingServer) registry.lookup(bindingNameBilling);
+				LOG.info("BillingServer looked up");
+			} catch (NotBoundException e) {
+				LOG.info("this remote object doesnt exist / hasnt been bound - BillingServer");
 			}
 		} catch (RemoteException e) {
 			LOG.info("problem occurred trying to get registry");

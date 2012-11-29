@@ -32,10 +32,10 @@ public class AnalyticsServer {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+			
+		BasicConfigurator.configure();
 		
 		LOG.info("Starting Analytics Server.");
-				
-		BasicConfigurator.configure();
 		
 		new AnalyticsServer();
 		

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import communication.TCPCommunication;
+
 /**
  * Represents an auction
  * @author Philipp Pfeiffer 0809357
@@ -59,21 +61,21 @@ public class Auction {
 		return this.ID;
 	}
 	
-	synchronized public void newBid(User bidder, double amount) {
+	synchronized public void newBid(User bidder, double amount, TCPCommunication tcpCommunication) {
 		if(!bidders.contains(bidder)) {
 			bidders.add(bidder);
 			if(amount > highestBid) {
 				highestBid = amount;
 				User previousHighest = highestBidder;
 				highestBidder = bidder;
-				server.bidSuccessful(bidder, amount, description, ID);
+				server.bidSuccessful(bidder, amount, description, ID, tcpCommunication);
 				if(previousHighest != null) {
-					server.userOverbid(previousHighest, amount, description, ID);
+					server.userOverbid(previousHighest, amount, description, ID, tcpCommunication);
 				}
 				
 			}
 			else {
-				server.bidUnsuccessful(bidder, amount, highestBid, description);
+				server.bidUnsuccessful(bidder, amount, highestBid, description, tcpCommunication);
 			}
 		}
 		else {
@@ -82,13 +84,12 @@ public class Auction {
 				User previousHighest = highestBidder;
 				highestBidder = bidder;
 				if(previousHighest != null) {
-					server.userOverbid(previousHighest, amount, description, ID);
+					server.userOverbid(previousHighest, amount, description, ID, tcpCommunication);
 				}
 			}
 			else{
-				server.bidUnsuccessful(bidder, amount, highestBid, description);
+				server.bidUnsuccessful(bidder, amount, highestBid, description, tcpCommunication);
 			}
-			
 		}
 	}
 
