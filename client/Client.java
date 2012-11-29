@@ -238,7 +238,6 @@ public class Client {
 		 * list <list as String>
 		 */
 		else if(splitResponse[0].equals("list")) {
-			System.out.println(response);
 			System.out.println(buildList(splitResponse));
 		}
 
@@ -403,18 +402,18 @@ public class Client {
 	 */
 	public String buildList(String[] splitString) {
 		String output = "";
-		String[] tempSplitString = new String[splitString.length];
+		
 		for(int i = 1; i<splitString.length; i++){
-			tempSplitString[i-1] = splitString[i];
-		}
-		for(int i = 0; i<tempSplitString.length; i++){
-			output += tempSplitString[i];
-			output += " ";
-			if(i % 8 == 0 && i != 0) {
+			if(splitString[i].equals("-|-")) {
 				output += "\n";
+			} else {
+				output += splitString[i];
+				output += " ";
 			}
+			
 		}
 		output.trim();
+		
 		return output;
 	}
 

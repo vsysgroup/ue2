@@ -459,7 +459,7 @@ public class Server {
 				highestBidderName = highestBidder.getUsername();
 			}
 			list += ID + ". " + "'" + description + "'" + " " + owner + " " + endDate + " " + highestBid + " " + highestBidderName;
-			list += " ";
+			list += " -|- ";
 		}
 		return list;
 	}
