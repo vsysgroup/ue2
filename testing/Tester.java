@@ -40,6 +40,9 @@ public class Tester {
 
 			threadpool.execute(new TestComponent(auctionsPerMin, auctionDuration, updateIntervalSec, bidsPerMin));
 		}
+		
+		//on exit:
+//		threadpool.shutdown();
 	}
 
 }
