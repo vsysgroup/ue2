@@ -4,7 +4,7 @@ import client.Client;
 import exception.WrongParameterCountException;
 
 /**
- * 
+ * creates a new instance of a client and opens a createAuction thread as well as a bidOnAuction thread
  * @author Barbara Schwankl 0852176
  *
  */

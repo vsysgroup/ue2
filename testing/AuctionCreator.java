@@ -2,6 +2,11 @@ package testing;
 
 import client.Client;
 
+/**
+ * test clients that creates a bid for a given number of times a minute
+ * @author Barbara Schwankl 0852176
+ *
+ */
 public class AuctionCreator implements Runnable {
 
 	private static int auctionNo = 0;

@@ -4,6 +4,11 @@ import server.Auction;
 import server.Server;
 import client.Client;
 
+/**
+ * test clients that makes a bid on the active auctions for a given number of times a minute
+ * @author Barbara Schwankl 0852176
+ *
+ */
 public class AuctionBidder implements Runnable {
 
 	private int sleepDurationBidding;
