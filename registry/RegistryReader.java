@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 /**
  * loads the registry details from properties
- * @author Babz
+ * @author Barbara Schwankl 0852176
  *
  */
 public class RegistryReader {

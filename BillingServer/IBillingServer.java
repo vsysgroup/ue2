@@ -5,8 +5,8 @@ import java.rmi.RemoteException;
 
 
 /**
- * remote interface for login authenification
- * @author Babz
+ * remote interface for login authentification
+ * @author Barbara Schwankl 0852176
  *
  */
 public interface IBillingServer extends Remote {

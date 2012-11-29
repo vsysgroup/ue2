@@ -5,19 +5,9 @@ import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.Scanner;
-
-import org.apache.log4j.Logger;
-
-import registry.RegistryReader;
-
-import billingServer.BillingServerImpl;
-import billingServer.IBillingServer;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import communication.TCPCommunication;
 
@@ -26,10 +16,11 @@ import exception.WrongParameterCountException;
 /**
  * Represents a Client
  * @author Philipp Pfeiffer 0809357
- *
+ * @author Barbara Schwankl 0852176
+ * 
  */
-public class Client {
-	
+public class Client implements Runnable {
+
 	private String serverHost;
 	private int serverTCPPort;
 	private int udpPort;
@@ -42,18 +33,39 @@ public class Client {
 	private DatagramSocket datagramSocket = null;
 	private ClientUDPListenerThread clientUDPListenerThread = null;
 
-	
+	private final static ExecutorService threadpool = Executors.newCachedThreadPool();
+
 	public static void main(String[] args) {
-		
-		try {
-			new Client(args);
-		} catch(NumberFormatException e ) {
-			howToUse();
-		}catch (WrongParameterCountException e) {
-			howToUse();
-		} 
+
+		boolean testingOn = false;
+
+		if(testingOn) {
+			try {
+				threadpool.execute(new Client(args));
+			} catch (WrongParameterCountException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+
+			try {
+				new Client(args);
+			} catch(NumberFormatException e ) {
+				howToUse();
+			}catch (WrongParameterCountException e) {
+				howToUse();
+			} 
+		}
 	}
 	
+	/**
+	 * thread for testing component
+	 */
+	@Override
+	public void run() {
+		//TODO generate clients that overbid each other
+	}
+
 	/**
 	 * Creates a new instance of Client
 	 * @param args
@@ -68,24 +80,25 @@ public class Client {
 			this.serverTCPPort = Integer.parseInt(args[1]);
 			this.udpPort = Integer.parseInt(args[2]);
 		}
-		
+
 		clientStatus = true;
-		
+
 		System.out.println("Starting Client.");
-		
+
+		//!!LAB2: NO UDP!!
 		try {
 			datagramSocket = new DatagramSocket(this.udpPort);
 		} catch (SocketException e) {
 			System.out.println("Could not bind to UDP port! The port may be in use." + " Port: " + udpPort);
 			exitClient();
 		}
-		//Start the listener threads
-		//new ClientListenerThread(tcpCommunication, this).start();
+		//		Start the listener threads
+		//		new ClientListenerThread(tcpCommunication, this).start();
 		clientUDPListenerThread = new ClientUDPListenerThread(datagramSocket, this);
 		clientUDPListenerThread.start();
-		
-		
-		
+
+
+
 		//loop checking for input
 		while(clientStatus) {
 			try {
@@ -94,7 +107,7 @@ public class Client {
 						break;
 					}
 					String[] input = in.nextLine().split(" ");
-					
+
 					//possible commands before login
 					if(input[0].equals("!end")) {
 						exitClient();
@@ -103,8 +116,8 @@ public class Client {
 						this.tcpCommunication = login(input[1]);
 					} else {
 						System.out.println("Please log in first. The only commands available while not logged in are:");
-					System.out.println("!login <username>");
-					System.out.println("!end");
+						System.out.println("!login <username>");
+						System.out.println("!end");
 					}
 				}
 			} catch(Exception e) {
@@ -112,15 +125,15 @@ public class Client {
 				e.printStackTrace();
 				exitClient();
 			}
-			
-			
-			
+
+
+
 			while(clientStatus && getLoggedIn() && in.hasNext()){
 				if(!loggedIn) {
 					break;
 				}
 				String[] input = in.nextLine().split(" ");
-				
+
 				//possible commands after login
 				if(input[0].equals("!end")) {
 					exitClient();
@@ -169,9 +182,9 @@ public class Client {
 		}
 		exitClient();
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Receives a message and processes it
 	 * @param message
@@ -179,7 +192,7 @@ public class Client {
 	public void receiveResponse(String message) {
 		String response = message;
 		String[] splitResponse = response.split(" ");
-		
+
 		/**
 		 * accepts the following responses:
 		 * login failed
@@ -195,7 +208,7 @@ public class Client {
 				setLoggedIn();
 			}
 		}
-		
+
 		/**
 		 * accepts the following responses:
 		 * logout failed
@@ -211,7 +224,7 @@ public class Client {
 				setLoggedOut();
 			}
 		}
-		
+
 		/**
 		 * accepts the following responses:
 		 * list <list as String>
@@ -219,7 +232,7 @@ public class Client {
 		else if(splitResponse[0].equals("list")) {
 			System.out.println(buildList(splitResponse));
 		}
-		
+
 		/**
 		 * accepts the following responses:
 		 * create failed
@@ -237,13 +250,13 @@ public class Client {
 				}
 				description.trim();
 				System.out.println("An auction '" + description + "' with id '" + splitResponse[2]
-									+ "' has been created and will end on " 
-									+ splitResponse[3] + " "
-									+ splitResponse[4] + " "
-									+ splitResponse[5] + ".");
+						+ "' has been created and will end on " 
+						+ splitResponse[3] + " "
+						+ splitResponse[4] + " "
+						+ splitResponse[5] + ".");
 			}
 		}
-		
+
 		/**
 		 * accepts the following responses:
 		 * bid failed
@@ -271,10 +284,10 @@ public class Client {
 				}
 				description.trim();
 				System.out.println("You unsuccessfully bid with " + splitResponse[2] + " on '" + description +"'."
-									+ " Current highest bid is " + splitResponse[3]);
+						+ " Current highest bid is " + splitResponse[3]);
 			}
 		}
-		
+
 		/**
 		 * accepts the following responses:
 		 * !new-bid <description>
@@ -287,9 +300,9 @@ public class Client {
 			}
 			description.trim();
 			System.out.println("You have been overbid on '" + description + "'.");
-			
+
 		}
-		
+
 		/**
 		 * accepts the following responses:
 		 * !auction-ended <winnerName> <amount> <description>  
@@ -311,7 +324,7 @@ public class Client {
 			}
 		}
 	}
-	
+
 	/**
 	 * This method is responsible for sending a message to the server to log the user in.
 	 * @param username
@@ -329,24 +342,25 @@ public class Client {
 			exitClient();
 		}
 		TCPCommunication communication = null;
-		
+
 		try {
 			communication = new TCPCommunication(clientSocket);
 		} catch (IOException e) {
 			System.out.println("Error while creating BufferedReader or PrintWriter!");
 			exitClient();
 		}
+		//		communication.send("!login" + " " + username);
 		communication.send("!login" + " " + username + " " + udpPort);
 		return communication;
 	}
-	
+
 	/**
 	 * Sends the !list command to the server
 	 */
 	public void list() {
 		tcpCommunication.send("!list" + " " + username);
 	}
-	
+
 	/**
 	 * Sends message to the server to create a new auction.
 	 * @param seconds
@@ -354,9 +368,9 @@ public class Client {
 	 */
 	public void createAuction(int seconds, String description) {
 		tcpCommunication.send("!create" + " " + username + " "  + seconds + " " + description);
-		
+
 	}
-	
+
 	/**
 	 * Sends message to the server to place a bid on an item.
 	 * @param ID
@@ -365,14 +379,14 @@ public class Client {
 	public void placeBid(int ID, double amount) {
 		tcpCommunication.send("!bid" + " " + username + " " + ID + " " + amount);
 	}
-	
+
 	/**
 	 * Sends a message to the server to log the user out.
 	 */
 	public void logout() {
 		tcpCommunication.send("!logout" + " " + username);
 	}
-	
+
 	/**
 	 * builds a list out of a String array
 	 * @param splitString
@@ -387,7 +401,7 @@ public class Client {
 		output.trim();
 		return output;
 	}
-	
+
 	/**
 	 * Prints out a list and explanation of all usable commands.
 	 */
@@ -398,9 +412,9 @@ public class Client {
 		System.out.println("!create <duration> <description> - Creates a new auction. The duration is given in seconds.");
 		System.out.println("!bid <auction-id> <amount> - Bids the set amount on a specific auction.");
 		System.out.println("!end - Shuts down the client.");
-		
+
 	}
-	
+
 	/**
 	 * sets the username
 	 * @param username
@@ -408,7 +422,7 @@ public class Client {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	/**
 	 * returns the status of the client
 	 * @return boolean
@@ -416,28 +430,28 @@ public class Client {
 	public boolean getClientStatus() {
 		return clientStatus;
 	}
-	
+
 	/**
 	 * Prints out information on how to properly start the client.
 	 */
 	public static void howToUse() {
 		System.out.println("Parameters incorrect. Correct syntax: java Client <ServerHostname> <ServerTCPPort> <UDPPort>");
 	}
-	
+
 	/**
 	 * Sets the client as logged in
 	 */
 	public void setLoggedIn() {
 		loggedIn = true;
 	}
-	
+
 	/**
 	 * Sets the client as logged out
 	 */
 	public void setLoggedOut() {
 		loggedIn = false;
 	}
-	
+
 	/**
 	 * Getter for loggedIn
 	 * @return boolean
@@ -445,12 +459,12 @@ public class Client {
 	public boolean getLoggedIn() {
 		return loggedIn;
 	}
-	
+
 	/**
 	 * Closes the client and logs the user out. Also closes the socket and all communications.
 	 */
 	public void exitClient() {
-//		clientUDPListenerThread.exit();
+		//		clientUDPListenerThread.exit();
 		clientStatus = false;
 		if(getLoggedIn()) {
 			logout();
@@ -466,9 +480,9 @@ public class Client {
 		} catch(IOException e) {
 			System.out.println("Error while closing Socket!");
 		}
-		
-		
+
+
 	}
-	
+
 
 }

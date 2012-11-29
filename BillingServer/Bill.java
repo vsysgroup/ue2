@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * contains all billing lines for a user
+ * @author Barbara Schwankl 0852176
+ *
+ */
 public class Bill implements Serializable {
 
 	/**

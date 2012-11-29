@@ -5,8 +5,8 @@ import java.text.DecimalFormat;
 
 
 /**
- * stores all billing lines of a given user
- * @author Babz
+ * contains components of a bill
+ * @author Barbara Schwankl 0852176
  *
  */
 public class BillEntry implements Serializable {

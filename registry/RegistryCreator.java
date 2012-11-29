@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 
 /**
  * creates registry once;
- * @author Babz
+ * @author Barbara Schwankl 0852176
  *
  */
 public class RegistryCreator {

@@ -15,7 +15,7 @@ import registry.RegistryReader;
 /**
  * responsible for billing;
  * addressed by Management Clients and Auction Server via RMI
- * @author Babz
+ * @author Barbara Schwankl 0852176
  *
  */
 public class BillingServer {

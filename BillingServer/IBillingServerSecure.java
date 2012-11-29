@@ -3,6 +3,11 @@ package billingServer;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+/**
+ * interface for methods accessible by a logged in admin (mgmt client)
+ * @author Barbara Schwankl 0852176
+ *
+ */
 public interface IBillingServerSecure extends Remote {
 
 	/**
