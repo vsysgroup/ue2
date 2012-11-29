@@ -1,5 +1,6 @@
 package testing;
 
+import server.Auction;
 import server.Server;
 import client.Client;
 
@@ -8,6 +9,7 @@ public class AuctionBidder implements Runnable {
 	private int sleepDurationBidding;
 	private int updateInterval;
 	private Client client;
+	private Auction randomAuction;
 
 	public AuctionBidder(Client client, int updateInterval,
 			int sleepDurationBidding) {
@@ -21,8 +23,8 @@ public class AuctionBidder implements Runnable {
 		
 		while(true) {
 			String currAuctions = Server.currentAuctionList;
-//			Auction randomActiveAuction = Server
-//			client.placeBid(ID, amount);
+			randomAuction = Server.getRandomAuction();
+			client.placeBid(randomAuction.getID(), calculateAmount());
 
 			try {
 				Thread.sleep(sleepDurationBidding);
@@ -32,6 +34,12 @@ public class AuctionBidder implements Runnable {
 			}
 		}
 
+	}
+
+	private double calculateAmount() {
+		long currTime = System.currentTimeMillis();
+		long auctionBeginTime = 0;
+		return 10 + (currTime - auctionBeginTime);
 	}
 
 }
