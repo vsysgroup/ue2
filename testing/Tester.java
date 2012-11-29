@@ -30,10 +30,12 @@ public class Tester {
 		//number of bids placed on random auctions per client per minute
 		int bidsPerMin = testParameters.getBidsPerMin();
 
-		//one mgmt client
-		//eventSubscription on any event type (filter ".*")
+		//only one mgmt client
+		//eventSubscription on any event type (filter ".*") & auto mode
 		//auto mode
 		ManagementClient admin = new ManagementClient();
+		admin.subscribeAll();
+		admin.setToAuto();
 		
 		//several clients
 		for(int i = 0; i <= noOfClients; ++i) {

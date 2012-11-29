@@ -7,6 +7,7 @@ import client.Client;
 public class AuctionBidder implements Runnable {
 
 	private int sleepDurationBidding;
+	@SuppressWarnings("unused")
 	private int updateInterval;
 	private Client client;
 	private Auction randomAuction;
