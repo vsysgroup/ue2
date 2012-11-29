@@ -48,13 +48,13 @@ public class Client {
 	 */
 	public Client(String[] args) throws WrongParameterCountException {
 		//check if parameters are alright
-		if(args.length != 2) {
-			throw new WrongParameterCountException();
-		} else {
+//		if(args.length != 2) {
+//			throw new WrongParameterCountException();
+//		} else {
 			this.serverHost = args[0];
 			this.serverTCPPort = Integer.parseInt(args[1]);
 //			this.udpPort = Integer.parseInt(args[2]);
-		}
+//		}
 
 		clientStatus = true;
 
