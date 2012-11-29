@@ -16,7 +16,6 @@ public class ServerTCPCommunicationThread extends Thread {
 	private Socket clientSocket = null;
 	private Server server;
 	private TCPCommunication tcpCommunication = null;
-	private User user;
 	
 	public ServerTCPCommunicationThread(Socket socket, Server server) {
 		this.clientSocket = socket;
@@ -43,16 +42,10 @@ public class ServerTCPCommunicationThread extends Thread {
 				exit();
 			}
 		}
+		//TODO perhaps send disconnect event from here
 	}
 	
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
-	public User getUser() {
-		return user;
-	}
-	
+
 	public void exit() {
 		interrupt();
 		try {

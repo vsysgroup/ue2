@@ -30,6 +30,7 @@ public class Client {
 	private String username = "";
 	private DatagramSocket datagramSocket = null;
 	private ClientUDPListenerThread clientUDPListenerThread = null;
+	private ClientTCPListenerThread clientTCPListenerThread = null;
 
 	public static void main(String[] args) {
 
@@ -60,19 +61,22 @@ public class Client {
 		clientStatus = true;
 
 		System.out.println("Starting Client.");
+		
+		establishTCPConnection();
+		clientTCPListenerThread = new ClientTCPListenerThread(tcpCommunication,this);
+		clientTCPListenerThread.start();
 
 		//!!LAB2: NO UDP!!
-		try {
-			datagramSocket = new DatagramSocket(this.udpPort);
-		} catch (SocketException e) {
-			System.out.println("Could not bind to UDP port! The port may be in use." + " Port: " + udpPort);
-			exitClient();
-		}
-		//		Start the listener threads
-		//		new ClientListenerThread(tcpCommunication, this).start();
-		clientUDPListenerThread = new ClientUDPListenerThread(datagramSocket, this);
-		clientUDPListenerThread.start();
-
+//		try {
+//			datagramSocket = new DatagramSocket(this.udpPort);
+//		} catch (SocketException e) {
+//			System.out.println("Could not bind to UDP port! The port may be in use." + " Port: " + udpPort);
+//			exitClient();
+//		}
+//		//		Start the listener threads
+//		new ClientTCPListenerThread(tcpCommunication, this).start();
+//		clientUDPListenerThread = new ClientUDPListenerThread(datagramSocket, this);
+//		clientUDPListenerThread.start();
 
 
 		//loop checking for input
@@ -89,12 +93,17 @@ public class Client {
 						exitClient();
 						return;
 					} else if(input[0].equals("!login") && input.length == 2) {
-						this.tcpCommunication = login(input[1]);
+						login(input[1]);
+					} else if(input[0].equals("!list")) {
+						listWhileNotLoggedIn();
+						continue;
 					} else {
 						System.out.println("Please log in first. The only commands available while not logged in are:");
 						System.out.println("!login <username>");
 						System.out.println("!end");
 					}
+					
+					
 				}
 			} catch(Exception e) {
 				System.out.println("Connection to the server failed!");
@@ -161,6 +170,31 @@ public class Client {
 
 
 
+	private void listWhileNotLoggedIn() {
+		tcpCommunication.send("!list");
+		
+	}
+
+	private void login(String username) {
+		tcpCommunication.send("!login" + " " + username + " " + udpPort);
+		
+	}
+
+	private void establishTCPConnection() {
+		try {
+			clientSocket = new Socket(serverHost, serverTCPPort);
+		} catch (UnknownHostException e) {
+			System.out.println("Connection to Server could not be established - Unknown Host");
+		} catch (IOException e) {
+			System.out.println("Connection to Server could not be established - IOException");
+		}
+		try {
+			tcpCommunication = new TCPCommunication(clientSocket);
+		} catch (IOException e) {
+			System.out.println("Communications with Server could not be established - IOException");
+		}
+	}
+
 	/**
 	 * Receives a message and processes it
 	 * @param message
@@ -206,6 +240,7 @@ public class Client {
 		 * list <list as String>
 		 */
 		else if(splitResponse[0].equals("list")) {
+			System.out.println(response);
 			System.out.println(buildList(splitResponse));
 		}
 
@@ -306,29 +341,29 @@ public class Client {
 	 * @param username
 	 * @return TCPCommunication
 	 */
-	public TCPCommunication login(String username) {
-		//create a socket for the connection with the server
-		try {
-			clientSocket = new Socket(serverHost, serverTCPPort);
-		} catch (UnknownHostException e) {
-			System.out.println("Could not resolve host or port!");
-			exitClient();
-		} catch (IOException e) {
-			System.out.println("Could not create socket!");
-			exitClient();
-		}
-		TCPCommunication communication = null;
-
-		try {
-			communication = new TCPCommunication(clientSocket);
-		} catch (IOException e) {
-			System.out.println("Error while creating BufferedReader or PrintWriter!");
-			exitClient();
-		}
-		//		communication.send("!login" + " " + username);
-		communication.send("!login" + " " + username + " " + udpPort);
-		return communication;
-	}
+//	public TCPCommunication login(String username) {
+//		//create a socket for the connection with the server
+//		try {
+//			clientSocket = new Socket(serverHost, serverTCPPort);
+//		} catch (UnknownHostException e) {
+//			System.out.println("Could not resolve host or port!");
+//			exitClient();
+//		} catch (IOException e) {
+//			System.out.println("Could not create socket!");
+//			exitClient();
+//		}
+//		TCPCommunication communication = null;
+//
+//		try {
+//			communication = new TCPCommunication(clientSocket);
+//		} catch (IOException e) {
+//			System.out.println("Error while creating BufferedReader or PrintWriter!");
+//			exitClient();
+//		}
+//		//		communication.send("!login" + " " + username);
+//		communication.send("!login" + " " + username + " " + udpPort);
+//		return communication;
+//	}
 
 	/**
 	 * Sends the !list command to the server
@@ -370,9 +405,16 @@ public class Client {
 	 */
 	public String buildList(String[] splitString) {
 		String output = "";
+		String[] tempSplitString = new String[splitString.length];
 		for(int i = 1; i<splitString.length; i++){
-			output += splitString[i];
+			tempSplitString[i-1] = splitString[i];
+		}
+		for(int i = 0; i<tempSplitString.length; i++){
+			output += tempSplitString[i];
 			output += " ";
+			if(i % 8 == 0 && i != 0) {
+				output += "\n";
+			}
 		}
 		output.trim();
 		return output;
