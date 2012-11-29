@@ -24,7 +24,11 @@ public class Auction {
 	public User highestBidder = null;
 	public Server server = null;
 	
+	private long creationTime = 0;
+	
 	public Auction(Date endDate, User owner, String description, Server server) {
+		
+		this.creationTime = System.currentTimeMillis();
 		
 		this.ID = newID++;
 		this.endDate = endDate;
@@ -127,6 +131,10 @@ public class Auction {
 		returnString = day + "." + month + "." + year + " " + hours + ":" + minutes + " " + timezone;
 		
 		return returnString;
+	}
+	
+	public long getCreationTime() {
+		return creationTime;
 	}
 	
 }
