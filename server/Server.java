@@ -571,6 +571,9 @@ public class Server {
 	}
 	
 	public static Auction getRandomAuction() {
+		if(auctions.size() <= 0) {
+			return null;
+		}
 		int amount = auctions.size() - 1;
 		Random randomGenerator = new Random();
 		int randomNumber = randomGenerator.nextInt(amount);
