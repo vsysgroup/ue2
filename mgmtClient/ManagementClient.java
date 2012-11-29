@@ -42,6 +42,7 @@ public class ManagementClient {
 	private ArrayList<String> storedMessages = new ArrayList<String>();
 	private boolean loggedIn = false;
 	private String currUser = null;
+	private Notify notify = null;
 
 	/**
 	 * @param args
@@ -59,7 +60,7 @@ public class ManagementClient {
 
 		lookupRMI();
 
-		Notify notify = new NotificationChecker(this);
+		notify = new NotificationChecker(this);
 		try {
 			UnicastRemoteObject.exportObject(notify, 0);
 		} catch (RemoteException e1) {
@@ -324,5 +325,32 @@ public class ManagementClient {
 		else {
 			storeMessage(message);
 		}	
+	}
+	
+	public void setToAuto() {
+		automaticPrintingOn = true;
+	}
+	
+	public void subscribe(String regex) {
+		String subscriptionID;
+		try {
+			subscriptionID = analyticsHandler.subscribe(regex, notify);
+			subscriptions.add(subscriptionID);
+			LOG.info("Created subscription with ID " + subscriptionID + " for events using filter " + regex);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void subscribeAll() {
+		String regex = "'(USER_.*)|(BID_.*)|(AUCTION_.*)'";
+		String subscriptionID;
+		try {
+			subscriptionID = analyticsHandler.subscribe(regex, notify);
+			subscriptions.add(subscriptionID);
+			LOG.info("Created subscription with ID " + subscriptionID + " for events using filter " + regex);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 }
