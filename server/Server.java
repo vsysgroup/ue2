@@ -130,7 +130,8 @@ public class Server {
 		 */
 		if(input[0].equals("!login")) {
 			String username = input[1];
-			int port = Integer.parseInt(input[2]);
+//			int port = Integer.parseInt(input[2]);
+			int port = 0;
 
 			if(!userKnown(username)){
 				User newUser = new User(username, inetAddress, port);

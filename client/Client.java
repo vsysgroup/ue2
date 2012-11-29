@@ -19,7 +19,7 @@ public class Client {
 
 	private String serverHost;
 	private int serverTCPPort;
-	private int udpPort;
+//	private int udpPort;
 	private Socket clientSocket = null;
 	private Boolean clientStatus = false;
 	private Boolean loggedIn = false;
@@ -27,7 +27,7 @@ public class Client {
 	private TCPCommunication tcpCommunication = null;
 	private String username = "";
 	private DatagramSocket datagramSocket = null;
-	private ClientUDPListenerThread clientUDPListenerThread = null;
+//	private ClientUDPListenerThread clientUDPListenerThread = null;
 	private ClientTCPListenerThread clientTCPListenerThread = null;
 
 	public static void main(String[] args) {
@@ -46,14 +46,14 @@ public class Client {
 	 * @param args
 	 * @throws WrongParameterCountException
 	 */
-	private Client(String[] args) throws WrongParameterCountException {
+	public Client(String[] args) throws WrongParameterCountException {
 		//check if parameters are alright
-		if(args.length != 3) {
+		if(args.length != 2) {
 			throw new WrongParameterCountException();
 		} else {
 			this.serverHost = args[0];
 			this.serverTCPPort = Integer.parseInt(args[1]);
-			this.udpPort = Integer.parseInt(args[2]);
+//			this.udpPort = Integer.parseInt(args[2]);
 		}
 
 		clientStatus = true;
@@ -174,7 +174,8 @@ public class Client {
 	}
 
 	private void login(String username) {
-		tcpCommunication.send("!login" + " " + username + " " + udpPort);
+		tcpCommunication.send("!login" + " " + username);
+//		tcpCommunication.send("!login" + " " + username + " " + udpPort);
 		
 	}
 

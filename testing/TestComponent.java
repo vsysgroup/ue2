@@ -1,6 +1,7 @@
 package testing;
 
 import client.Client;
+import exception.WrongParameterCountException;
 
 /**
  * 
@@ -28,8 +29,24 @@ public class TestComponent implements Runnable {
 	public void run() {
 
 		//auction creation
-//		Client client = new Client();
-//		client.createAuction(auctionDuration, "test" + ++auctionNo);
+		String[] args = {"localhost", "13460" };
+		Client client = null;
+		try {
+			client = new Client(args);
+		} catch (WrongParameterCountException e) {
+			System.out.println("ERROR: expected no of params: 2");
+			e.printStackTrace();
+		}
+		int sleepDurationCreation = 60000 / auctionsPerMin;
+		while(true) {
+			client.createAuction(auctionDuration, "test" + ++auctionNo);
+			try {
+				Thread.sleep(sleepDurationCreation);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		
 	}
