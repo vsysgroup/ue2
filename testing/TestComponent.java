@@ -40,8 +40,9 @@ public class TestComponent implements Runnable {
 		Client client = null;
 		try {
 			client = new Client(args);
-			client.login("tester" + ++loginNo);
-			LOG.info("new test client created");
+			String username = "tester" + ++loginNo;
+			client.login(username);
+			LOG.info("new test client created " + username);
 		} catch (WrongParameterCountException e) {
 			System.out.println("ERROR: expected no of params: 2");
 			e.printStackTrace();
