@@ -15,8 +15,6 @@ public class TestComponent implements Runnable {
 	private int updateInterval;
 	private int bidsPerMin;
 	
-	private static int auctionNo = 0;
-
 	public TestComponent(int auctionsPerMin, int auctionDuration,
 			int updateIntervalSec, int bidsPerMin) {
 		this.auctionsPerMin = auctionsPerMin;
@@ -37,17 +35,25 @@ public class TestComponent implements Runnable {
 			System.out.println("ERROR: expected no of params: 2");
 			e.printStackTrace();
 		}
-		int sleepDurationCreation = 60000 / auctionsPerMin;
-		while(true) {
-			client.createAuction(auctionDuration, "test" + ++auctionNo);
-			try {
-				Thread.sleep(sleepDurationCreation);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		
+		int sleepDurationCreation;
+		if(auctionsPerMin == 0) {
+			sleepDurationCreation = 0;
+		} else {
+			sleepDurationCreation = 60000 / auctionsPerMin;
 		}
 		
+		int sleepDurationBidding;
+		if(bidsPerMin == 0) {
+			sleepDurationBidding = 0;
+		} else {
+			sleepDurationBidding = 60000 /bidsPerMin;
+		}
+		
+		Thread create = new Thread(new AuctionCreator(client, auctionDuration, sleepDurationCreation));
+		Thread bid = new Thread(new AuctionBidder(client, updateInterval, sleepDurationBidding));
+		create.start();
+		bid.start();
 		
 	}
 
