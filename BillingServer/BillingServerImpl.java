@@ -58,8 +58,9 @@ public class BillingServerImpl implements IBillingServer, Serializable {
 	
 	private String byteArrayToHex(byte[] digest) {
 		StringBuilder sb = new StringBuilder();
-		for(byte b: digest)
+		for(byte b: digest) {
 			sb.append(String.format("%02x", b&0xff));
+		}
 		return sb.toString();
 	}
 

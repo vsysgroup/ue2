@@ -58,10 +58,16 @@ public class Step implements Serializable {
 
 	@Override
 	public String toString() {
-		DecimalFormat customFormat = new DecimalFormat("#.#");		
-		return 	customFormat.format(startPrice) + "\t" +
-			customFormat.format(endPrice) + "\t" +
-			customFormat.format(fixedPrice) + "\t" +
+		String strEndPrice = new String();
+		DecimalFormat customFormat = new DecimalFormat("#.#");	
+		if (Double.isInfinite(endPrice)) {
+			strEndPrice = "INFINITY" + "\t";
+		} else {
+			strEndPrice = customFormat.format(endPrice) + "\t" + "\t";
+		}
+		return 	customFormat.format(startPrice) + "\t" + "\t" +
+			strEndPrice +
+			customFormat.format(fixedPrice) + "\t" + "\t" +
 			customFormat.format(variablePricePercent) + "%";		
 	}
 	

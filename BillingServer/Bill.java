@@ -39,7 +39,7 @@ public class Bill implements Serializable {
 	
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("auction_ID" + "\t" + "strike_price" + "\t" + "fee_fixed" + "\t" + "fee_variable" + "\t" + "fee_total");
+		buffer.append("auction_ID" + "\t" + "strike_price" + "\t" + "fee_fixed" + "\t" + "fee_variable" + "\t" + "fee_total\n");
 		for(BillEntry entry: allBills) {
 			buffer.append(entry.toString() + "\n");
 		}

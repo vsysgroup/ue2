@@ -134,25 +134,29 @@ public class ManagementClient {
 						System.out.println("ERROR: Expected parameters: startPrice, endPrice, fixedPrice, variablePricePercent");
 						LOG.error("Wrong no of parameters");
 					} else {
-						double startPrice = Double.parseDouble(cmd[1]);
-						double endPrice = Double.parseDouble(cmd[2]);
-						double fixedPrice = Double.parseDouble(cmd[3]);
-						double variablePricePercent = Double.parseDouble(cmd[4]);
 						try {
-							billingHandler.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
-							if(endPrice == 0) {
-								System.out.println("[" + startPrice + " INFINITY] successfully added");
-							} else {
-								System.out.println("[" + startPrice + " " + endPrice + "] successfully added");
-							} 
-						} catch (RemoteException e) {
-							System.out.println(e.getMessage());
-							LOG.error("create price steps failed");
-							e.printStackTrace();
+							double startPrice = Double.parseDouble(cmd[1]);
+							double endPrice = Double.parseDouble(cmd[2]);
+							double fixedPrice = Double.parseDouble(cmd[3]);
+							double variablePricePercent = Double.parseDouble(cmd[4]);
+							try {
+								billingHandler.createPriceStep(startPrice, endPrice, fixedPrice, variablePricePercent);
+								if(endPrice == 0) {
+									System.out.println("[" + startPrice + " INFINITY] successfully added");
+								} else {
+									System.out.println("[" + startPrice + " " + endPrice + "] successfully added");
+								} 
+							} catch (RemoteException e) {
+								System.out.println(e.getMessage());
+								LOG.error("create price steps failed");
+								e.printStackTrace();
+							} catch (NumberFormatException e) {
+								System.out.println("ERROR: parameters must be floatingpoint values");
+								LOG.error("wrong number format - supposed to be double");
+								e.printStackTrace();
+							}
 						} catch (NumberFormatException e) {
-							System.out.println("ERROR: parameters must be floatingpoint values");
-							LOG.error("wrong number format - supposed to be double");
-							e.printStackTrace();
+							LOG.error("Invalid number format");
 						}
 					}
 				}
