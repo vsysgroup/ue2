@@ -6,8 +6,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import communication.TCPCommunication;
 
@@ -19,7 +17,7 @@ import exception.WrongParameterCountException;
  * @author Barbara Schwankl 0852176
  * 
  */
-public class Client implements Runnable {
+public class Client {
 
 	private String serverHost;
 	private int serverTCPPort;
@@ -33,46 +31,15 @@ public class Client implements Runnable {
 	private DatagramSocket datagramSocket = null;
 	private ClientUDPListenerThread clientUDPListenerThread = null;
 
-	private final static ExecutorService threadpool = Executors.newCachedThreadPool();
-
 	public static void main(String[] args) {
 
-		boolean testingOn = false;
-
-		if(testingOn) {
-			LoadtestReader testParameters = new LoadtestReader();
-			int noOfClients = testParameters.getNoOfClients();
-			int auctionsPerMin = testParameters.getAuctionsPerMin();
-			int auctionDuration = testParameters.getAuctionDuration();
-			int updateIntervalSec = testParameters.getUpdateIntervalSec();
-			int bidsPerMin = testParameters.getBidsPerMin();
-			try {
-				for(int i = 0; i <= noOfClients; ++i) {
-					
-					threadpool.execute(new Client(args));
-				}
-			} catch (WrongParameterCountException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-
-			try {
-				new Client(args);
-			} catch(NumberFormatException e ) {
-				howToUse();
-			}catch (WrongParameterCountException e) {
-				howToUse();
-			} 
-		}
-	}
-	
-	/**
-	 * thread for testing component
-	 */
-	@Override
-	public void run() {
-		//TODO generate clients that overbid each other
+		try {
+			new Client(args);
+		} catch(NumberFormatException e ) {
+			howToUse();
+		}catch (WrongParameterCountException e) {
+			howToUse();
+		} 
 	}
 
 	/**

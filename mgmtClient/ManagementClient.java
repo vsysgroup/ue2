@@ -42,7 +42,7 @@ public class ManagementClient {
 	private ArrayList<String> storedMessages = new ArrayList<String>();
 	private boolean loggedIn = false;
 	private String currUser = null;
-	
+
 	/**
 	 * @param args
 	 */
@@ -50,18 +50,10 @@ public class ManagementClient {
 
 		//init logger
 		BasicConfigurator.configure();
-		
-		boolean testingOn = false;
 
-		if(testingOn) {
-			//eventSubscription on any event type (filter ".*")
-			//auto mode
-			
-		} else {
-			new ManagementClient();
-		}
+		new ManagementClient();
 	}
-	
+
 	private ManagementClient() {
 		LOG.info("Starting Management Client");
 
