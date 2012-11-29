@@ -1,5 +1,7 @@
 package testing;
 
+import org.apache.log4j.Logger;
+
 import server.Auction;
 import server.Server;
 import client.Client;
@@ -11,6 +13,8 @@ import client.Client;
  */
 public class AuctionBidder implements Runnable {
 
+	public static final Logger LOG = Logger.getLogger(AuctionBidder.class);
+	
 	private int sleepDurationBidding;
 	@SuppressWarnings("unused")
 	private int updateInterval;
@@ -32,8 +36,11 @@ public class AuctionBidder implements Runnable {
 			@SuppressWarnings("unused")
 			String currAuctions = Server.currentAuctionList;
 			randomAuction = Server.getRandomAuction();
-			client.placeBid(randomAuction.getID(), calculateAmount());
-
+			int id = randomAuction.getID();
+			double amount = calculateAmount();
+			client.placeBid(id, amount);
+			LOG.info("test bid placed: id = " + id + " amount = " + amount);
+			
 			try {
 				Thread.sleep(sleepDurationBidding);
 			} catch (InterruptedException e) {

@@ -1,5 +1,9 @@
 package testing;
 
+import mgmtClient.ManagementClient;
+
+import org.apache.log4j.Logger;
+
 import client.Client;
 import exception.WrongParameterCountException;
 
@@ -10,6 +14,8 @@ import exception.WrongParameterCountException;
  */
 public class TestComponent implements Runnable {
 
+	public static final Logger LOG = Logger.getLogger(TestComponent.class);
+	
 	private int auctionsPerMin;
 	private int auctionDuration;
 	private int updateInterval;
@@ -31,6 +37,7 @@ public class TestComponent implements Runnable {
 		Client client = null;
 		try {
 			client = new Client(args);
+			LOG.info("new test client created");
 		} catch (WrongParameterCountException e) {
 			System.out.println("ERROR: expected no of params: 2");
 			e.printStackTrace();

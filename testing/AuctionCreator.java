@@ -1,5 +1,7 @@
 package testing;
 
+import org.apache.log4j.Logger;
+
 import client.Client;
 
 /**
@@ -9,6 +11,7 @@ import client.Client;
  */
 public class AuctionCreator implements Runnable {
 
+	public static final Logger LOG = Logger.getLogger(AuctionCreator.class);
 	private static int auctionNo = 0;
 	
 	private int sleepDurationCreation;
@@ -27,7 +30,8 @@ public class AuctionCreator implements Runnable {
 
 		while(true) {
 			client.createAuction(auctionDuration, "test" + ++auctionNo);
-
+			LOG.info("test auction created with no: " + auctionNo);
+			
 			try {
 				Thread.sleep(sleepDurationCreation);
 			} catch (InterruptedException e) {
