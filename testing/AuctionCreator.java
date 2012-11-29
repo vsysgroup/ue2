@@ -29,7 +29,7 @@ public class AuctionCreator implements Runnable {
 	public void run() {
 
 		while(true) {
-			client.createAuction(auctionDuration, "test" + getAuctionNo());
+			client.createAuction(auctionDuration, "test");
 			LOG.info("test auction created with no: " + auctionNo);
 			
 			try {
@@ -39,9 +39,5 @@ public class AuctionCreator implements Runnable {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	private static synchronized int getAuctionNo() {
-		return ++auctionNo;
 	}
 }
